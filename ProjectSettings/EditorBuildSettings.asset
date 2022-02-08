@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Oculus/Interaction/Samples/Scenes/BasicPoseDetection.unity
-    guid: 5661873a4cd8ad8469c072d3852197c2
+    path: Assets/Scenes/HandPoseDetection.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 66fcd49f348f6cf4caaa24d0b777b6fd, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 17af175e1664c8c4ba0adf25fc3ed78c, type: 2}

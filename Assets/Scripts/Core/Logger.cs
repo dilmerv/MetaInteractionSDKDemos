@@ -35,6 +35,8 @@ public class Logger : Singleton<Logger>
         }
     }
 
+    public void Clear() => debugAreaText.text = string.Empty;
+
     public void LogInfo(string message)
     {
         ClearLines();

@@ -151,11 +151,13 @@ public class OVRPlayerControllerWithHandPoses : MonoBehaviour
 
 	private bool HandPoseMoveForward = false;
 	private bool HandPoseMoveBackward = false;
-	private bool HandPoseRotate = false;
+	private bool HandPoseRotateRight = false;
+	private bool HandPoseRotateLeft = false;
 
 	public void SetHandPoseMoveForward(bool state) => HandPoseMoveForward = state;
 	public void SetHandPoseMoveBackward(bool state) => HandPoseMoveBackward = state;
-	public void SetHandPoseRotate(bool state) => HandPoseRotate = state;
+	public void SetHandPoseRotateRight(bool state) => HandPoseRotateRight = state;
+	public void SetHandPoseRotateLeft(bool state) => HandPoseRotateLeft = state;
 
 	void Start()
 	{
@@ -446,7 +448,7 @@ public class OVRPlayerControllerWithHandPoses : MonoBehaviour
 			if (SnapRotation)
 			{
 				if (OVRInput.Get(OVRInput.Button.SecondaryThumbstickLeft) ||
-					(RotationEitherThumbstick && OVRInput.Get(OVRInput.Button.PrimaryThumbstickLeft)) || HandPoseRotate)
+					(RotationEitherThumbstick && OVRInput.Get(OVRInput.Button.PrimaryThumbstickLeft)) || HandPoseRotateLeft)
 				{
 					if (ReadyToSnapTurn)
 					{
@@ -455,7 +457,7 @@ public class OVRPlayerControllerWithHandPoses : MonoBehaviour
 					}
 				}
 				else if (OVRInput.Get(OVRInput.Button.SecondaryThumbstickRight) ||
-					(RotationEitherThumbstick && OVRInput.Get(OVRInput.Button.PrimaryThumbstickRight)) || HandPoseRotate)
+					(RotationEitherThumbstick && OVRInput.Get(OVRInput.Button.PrimaryThumbstickRight)) || HandPoseRotateRight)
 				{
 					if (ReadyToSnapTurn)
 					{
@@ -474,9 +476,10 @@ public class OVRPlayerControllerWithHandPoses : MonoBehaviour
 				if (RotationEitherThumbstick)
 				{
 					Vector2 altSecondaryAxis = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
-					if (secondaryAxis.sqrMagnitude < altSecondaryAxis.sqrMagnitude || HandPoseRotate)
+					if (secondaryAxis.sqrMagnitude < altSecondaryAxis.sqrMagnitude || HandPoseRotateLeft || HandPoseRotateRight)
 					{
-						secondaryAxis = HandPoseRotate ? new Vector2(1,0) : altSecondaryAxis;
+						Vector2 handPoseRotation = HandPoseRotateLeft ? Vector2.left : Vector2.right;
+						secondaryAxis = (HandPoseRotateLeft || HandPoseRotateRight) ? handPoseRotation : altSecondaryAxis;
 					}
 				}
 				euler.y += secondaryAxis.x * rotateInfluence;

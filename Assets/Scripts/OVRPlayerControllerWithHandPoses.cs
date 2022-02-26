@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using UnityEngine;
 
 /// <summary>
 /// Controls the player's movement in virtual reality.
@@ -154,10 +152,26 @@ public class OVRPlayerControllerWithHandPoses : MonoBehaviour
 	private bool HandPoseRotateRight = false;
 	private bool HandPoseRotateLeft = false;
 
-	public void SetHandPoseMoveForward(bool state) => HandPoseMoveForward = state;
-	public void SetHandPoseMoveBackward(bool state) => HandPoseMoveBackward = state;
-	public void SetHandPoseRotateRight(bool state) => HandPoseRotateRight = state;
-	public void SetHandPoseRotateLeft(bool state) => HandPoseRotateLeft = state;
+	public void SetHandPoseMoveForward(bool state)
+	{
+		HandPoseMoveForward = state;
+		Logger.Instance.LogInfo($"SetHandPoseMoveForward state changed to: {state}");
+	}
+	public void SetHandPoseMoveBackward(bool state)
+	{
+		HandPoseMoveBackward = state;
+		Logger.Instance.LogInfo($"SetHandPoseMoveBackward state changed to: {state}");
+	}
+	public void SetHandPoseRotateRight(bool state)
+	{
+		HandPoseRotateRight = state;
+		Logger.Instance.LogInfo($"SetHandPoseRotateRight state changed to: {state}");
+	}
+	public void SetHandPoseRotateLeft(bool state)
+	{
+		HandPoseRotateLeft = state;
+		Logger.Instance.LogInfo($"SetHandPoseRotateLeft state changed to: {state}");
+	}
 
 	void Start()
 	{
@@ -342,7 +356,6 @@ public class OVRPlayerControllerWithHandPoses : MonoBehaviour
 			{
 				moveForward = true;
 				dpad_move = true;
-
 			}
 
 			if (OVRInput.Get(OVRInput.Button.DpadDown) || HandPoseMoveBackward)
@@ -370,7 +383,7 @@ public class OVRPlayerControllerWithHandPoses : MonoBehaviour
 			if (dpad_move || Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
 				moveInfluence *= 2.0f;
 
-			Quaternion ort = transform.rotation;
+			Quaternion ort = CameraRig.centerEyeAnchor.rotation;
 			Vector3 ortEuler = ort.eulerAngles;
 			ortEuler.z = ortEuler.x = 0f;
 			ort = Quaternion.Euler(ortEuler);
@@ -545,78 +558,6 @@ public class OVRPlayerControllerWithHandPoses : MonoBehaviour
 		Controller.Move(Vector3.zero);
 		MoveThrottle = Vector3.zero;
 		FallSpeed = 0.0f;
-	}
-
-	/// <summary>
-	/// Gets the move scale multiplier.
-	/// </summary>
-	/// <param name="moveScaleMultiplier">Move scale multiplier.</param>
-	public void GetMoveScaleMultiplier(ref float moveScaleMultiplier)
-	{
-		moveScaleMultiplier = MoveScaleMultiplier;
-	}
-
-	/// <summary>
-	/// Sets the move scale multiplier.
-	/// </summary>
-	/// <param name="moveScaleMultiplier">Move scale multiplier.</param>
-	public void SetMoveScaleMultiplier(float moveScaleMultiplier)
-	{
-		MoveScaleMultiplier = moveScaleMultiplier;
-	}
-
-	/// <summary>
-	/// Gets the rotation scale multiplier.
-	/// </summary>
-	/// <param name="rotationScaleMultiplier">Rotation scale multiplier.</param>
-	public void GetRotationScaleMultiplier(ref float rotationScaleMultiplier)
-	{
-		rotationScaleMultiplier = RotationScaleMultiplier;
-	}
-
-	/// <summary>
-	/// Sets the rotation scale multiplier.
-	/// </summary>
-	/// <param name="rotationScaleMultiplier">Rotation scale multiplier.</param>
-	public void SetRotationScaleMultiplier(float rotationScaleMultiplier)
-	{
-		RotationScaleMultiplier = rotationScaleMultiplier;
-	}
-
-	/// <summary>
-	/// Gets the allow mouse rotation.
-	/// </summary>
-	/// <param name="skipMouseRotation">Allow mouse rotation.</param>
-	public void GetSkipMouseRotation(ref bool skipMouseRotation)
-	{
-		skipMouseRotation = SkipMouseRotation;
-	}
-
-	/// <summary>
-	/// Sets the allow mouse rotation.
-	/// </summary>
-	/// <param name="skipMouseRotation">If set to <c>true</c> allow mouse rotation.</param>
-	public void SetSkipMouseRotation(bool skipMouseRotation)
-	{
-		SkipMouseRotation = skipMouseRotation;
-	}
-
-	/// <summary>
-	/// Gets the halt update movement.
-	/// </summary>
-	/// <param name="haltUpdateMovement">Halt update movement.</param>
-	public void GetHaltUpdateMovement(ref bool haltUpdateMovement)
-	{
-		haltUpdateMovement = HaltUpdateMovement;
-	}
-
-	/// <summary>
-	/// Sets the halt update movement.
-	/// </summary>
-	/// <param name="haltUpdateMovement">If set to <c>true</c> halt update movement.</param>
-	public void SetHaltUpdateMovement(bool haltUpdateMovement)
-	{
-		HaltUpdateMovement = haltUpdateMovement;
 	}
 
 	/// <summary>

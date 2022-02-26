@@ -11,8 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4cfe1df7ed391a24fbe2a2d275e81b06, type: 3}
   m_Name: ThumbUp
-  m_EditorClassIdentifier: 
-  _shapeName: Thumb Up
+  m_EditorClassIdentifier:
   _thumbFeatureConfigs:
     _value:
     - _mode: 0
@@ -50,3 +49,9 @@ MonoBehaviour:
     - _mode: 1
       _feature: 1
       _state: 3
+  _shapeName: Thumb Up
+  _thumbFeatureStates:
+  _indexFeatureStates:
+  _middleFeatureStates:
+  _ringFeatureStates:
+  _pinkyFeatureStates:

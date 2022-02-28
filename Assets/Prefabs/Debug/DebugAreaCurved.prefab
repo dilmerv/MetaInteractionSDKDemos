@@ -939,8 +939,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.22
-  m_fontSizeBase: 25.22
+  m_fontSize: 17.5
+  m_fontSizeBase: 17.5
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1285,7 +1285,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debugAreaText: {fileID: 2112619972230460742}
   enableDebug: 1
-  maxLines: 15
+  maxLines: 20
 --- !u!1 &5943912476796014610
 GameObject:
   m_ObjectHideFlags: 0

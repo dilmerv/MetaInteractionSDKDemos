@@ -4526,25 +4526,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2112619972230460742, guid: d014d593e4e09c24484038ece8deeace, type: 3}
-      propertyPath: m_text
-      value: '[DEBUG AREA]'
-      objectReference: {fileID: 0}
-    - target: {fileID: 2112619972230460742, guid: d014d593e4e09c24484038ece8deeace, type: 3}
-      propertyPath: m_fontSize
-      value: 17.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2112619972230460742, guid: d014d593e4e09c24484038ece8deeace, type: 3}
-      propertyPath: m_fontSizeBase
-      value: 17.5
-      objectReference: {fileID: 0}
     - target: {fileID: 4213155569486078984, guid: d014d593e4e09c24484038ece8deeace, type: 3}
       propertyPath: m_Name
       value: DebugAreaCurved
-      objectReference: {fileID: 0}
-    - target: {fileID: 4213155569486078985, guid: d014d593e4e09c24484038ece8deeace, type: 3}
-      propertyPath: maxLines
-      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5267230434626620353, guid: d014d593e4e09c24484038ece8deeace, type: 3}
       propertyPath: m_RootOrder
@@ -4718,30 +4702,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 719545423497733111, guid: 2bb00e31726c08e4b8db0c030a5fdd4e, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 719545424793509194, guid: 2bb00e31726c08e4b8db0c030a5fdd4e, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3151740824510038933, guid: 2bb00e31726c08e4b8db0c030a5fdd4e, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3151740825190168162, guid: 2bb00e31726c08e4b8db0c030a5fdd4e, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3459040758963329852, guid: 2bb00e31726c08e4b8db0c030a5fdd4e, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3584366859128849057, guid: 2bb00e31726c08e4b8db0c030a5fdd4e, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4082529430864431486, guid: 2bb00e31726c08e4b8db0c030a5fdd4e, type: 3}
       propertyPath: m_Name
       value: PlayerControllerSampleRig
@@ -4795,17 +4755,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2956604756441743025}
     - target: {fileID: 8475879518706128571, guid: 2bb00e31726c08e4b8db0c030a5fdd4e, type: 3}
-      propertyPath: offsetFromHand.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8475879518706128571, guid: 2bb00e31726c08e4b8db0c030a5fdd4e, type: 3}
       propertyPath: onLocomotionAction
       value: 
       objectReference: {fileID: 1315185750510865491}
-    - target: {fileID: 8475879518706128572, guid: 2bb00e31726c08e4b8db0c030a5fdd4e, type: 3}
-      propertyPath: m_Height
-      value: 2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2bb00e31726c08e4b8db0c030a5fdd4e, type: 3}
 --- !u!1001 &8764602732774476176

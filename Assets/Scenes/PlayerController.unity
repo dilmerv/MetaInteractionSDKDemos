@@ -4527,6 +4527,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2112619972230460742, guid: d014d593e4e09c24484038ece8deeace, type: 3}
+      propertyPath: m_text
+      value: '[DEBUG AREA]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 2112619972230460742, guid: d014d593e4e09c24484038ece8deeace, type: 3}
       propertyPath: m_fontSize
       value: 17.5
       objectReference: {fileID: 0}
@@ -4537,6 +4541,10 @@ PrefabInstance:
     - target: {fileID: 4213155569486078984, guid: d014d593e4e09c24484038ece8deeace, type: 3}
       propertyPath: m_Name
       value: DebugAreaCurved
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213155569486078985, guid: d014d593e4e09c24484038ece8deeace, type: 3}
+      propertyPath: maxLines
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5267230434626620353, guid: d014d593e4e09c24484038ece8deeace, type: 3}
       propertyPath: m_RootOrder

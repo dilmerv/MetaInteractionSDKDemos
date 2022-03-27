@@ -15,10 +15,10 @@ using UnityEngine;
 
 namespace Oculus.Interaction.Input
 {
-    public class Hmd : DataModifier<HmdDataAsset, HmdDataSourceConfig>, IHmd
+    public class Hmd : DataModifier<HmdDataAsset>, IHmd
     {
         public ITrackingToWorldTransformer TrackingToWorldTransformer =>
-            Config.TrackingToWorldTransformer;
+          GetData().Config.TrackingToWorldTransformer;
 
         public event Action HmdUpdated = delegate { };
 

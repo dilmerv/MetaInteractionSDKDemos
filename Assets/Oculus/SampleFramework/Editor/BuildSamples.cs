@@ -37,7 +37,7 @@ partial class OculusBuildSamples
 
     // Note this APK isn't fully functional without some additional
     // build steps listed here:
-    // ovrsource/Software/Samples/Unity/SampleFramework/Assets/Oculus/SampleFramework/Usage/Firebase/README.md
+    // ovrsource/arvr/projects/integrations/UnitySampleFramework/Assets/Oculus/SampleFramework/Usage/Firebase/README.md
     //
     // Here we are only building the smaller (incomplete) build. It's
     // not perfect  but it's better than nothing.
@@ -64,21 +64,6 @@ partial class OculusBuildSamples
     static void BuildOVROverlayCanvas() {
         InitializeBuild("com.oculus.unitysample.ovroverlaycanvas");
         Build("OVROverlayCanvas");
-    }
-
-    static void BuildStereo180Video() {
-        AndroidVideoEditorUtil.EnableNativeVideoPlayer();
-        InitializeBuild("com.oculus.unitysample.stereo180video");
-        Build("Stereo180Video");
-        AndroidVideoEditorUtil.DisableNativeVideoPlayer();
-    }
-
-    // TODO(radtker): Add additional build steps for proper functionality.
-    static void BuildWidevineVideo() {
-        AndroidVideoEditorUtil.EnableNativeVideoPlayer();
-        InitializeBuild("com.oculus.unitysample.widevinevideo");
-        Build("WidevineVideo");
-        AndroidVideoEditorUtil.DisableNativeVideoPlayer();
     }
 
     // reach out to panya or brittahummel for issues regarding passthrough

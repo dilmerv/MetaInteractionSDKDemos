@@ -12,43 +12,33 @@
 
 using System;
 using Facebook.WitAi;
+using Facebook.WitAi.Windows;
+using Facebook.WitAi.Utilities;
 using Oculus.Voice.Utility;
 using UnityEditor;
 using UnityEngine;
 
 namespace Oculus.Voice.Windows
 {
-    public class AboutWindow : VoiceSDKWizardWindow
+    public class AboutWindow : WitScriptableWizard
     {
-        protected override float ContentHeight => EditorGUIUtility.singleLineHeight * 4 + 16 + 100;
-
-        [MenuItem("Oculus/Voice SDK/About", false, 200)]
-        static void CreateWizard()
+        protected override Texture2D HeaderIcon => VoiceSDKStyles.MainHeader;
+        protected override GUIContent Title => VoiceSDKStyles.AboutTitle;
+        protected override string ButtonLabel => VoiceSDKStyles.Texts.AboutCloseLabel;
+        protected override string ContentSubheaderLabel => string.Empty;
+        
+        protected override void LayoutFields()
         {
-            ScriptableWizard.DisplayWizard<AboutWindow>("About Voice SDK", "Close");
-        }
-
-        protected override bool DrawWizardGUI()
-        {
-            base.DrawWizardGUI();
-
-            GUILayout.Label("Voice SDK Version: " + VoiceSDKVersion.VERSION);
-            GUILayout.Label("Wit.ai SDK Version: " + WitRequest.WIT_SDK_VERSION);
-            GUILayout.Label("Wit.ai API Version: " + WitRequest.WIT_API_VERSION);
+            WitEditorUI.LayoutKeyLabel(VoiceSDKStyles.Texts.AboutVoiceSdkVersionLabel, VoiceSDKVersion.VERSION);
+            WitEditorUI.LayoutKeyLabel(VoiceSDKStyles.Texts.AboutWitSdkVersionLabel, WitRequest.WIT_SDK_VERSION);
+            WitEditorUI.LayoutKeyLabel(VoiceSDKStyles.Texts.AboutWitApiVersionLabel, WitRequest.WIT_API_VERSION);
 
             GUILayout.Space(16);
 
-            if (GUILayout.Button("Tutorials"))
+            if (WitEditorUI.LayoutTextButton(VoiceSDKStyles.Texts.AboutTutorialButtonLabel))
             {
-                Application.OpenURL("https://developer.oculus.com/experimental/voice-sdk/tutorial-overview/");
+                Application.OpenURL(VoiceSDKStyles.Texts.AboutTutorialButtonUrl);
             }
-
-            return false;
-        }
-
-        private void OnWizardCreate()
-        {
-
         }
     }
 }

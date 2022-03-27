@@ -47,7 +47,7 @@ namespace Oculus.Interaction
         {
             if (_started)
             {
-                Hand.HandUpdated += HandleHandUpdated;
+                Hand.WhenHandUpdated += HandleHandUpdated;
             }
         }
 
@@ -55,7 +55,7 @@ namespace Oculus.Interaction
         {
             if (_started)
             {
-                Hand.HandUpdated -= HandleHandUpdated;
+                Hand.WhenHandUpdated -= HandleHandUpdated;
             }
         }
 

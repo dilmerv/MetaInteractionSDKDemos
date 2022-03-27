@@ -115,11 +115,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43f86b14a27b52f4f9298c33015b5c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transferHandOnSecondGrab: 1
-  _maxGrabPoints: -1
   _oneGrabTransformer: {fileID: 0}
   _twoGrabTransformer: {fileID: 0}
-  _pointables: []
+  _transferHandOnSecondGrab: 1
+  _addNewGrabsToFront: 0
+  _maxGrabPoints: -1
 --- !u!114 &1490902565616352496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81bef07654562f541951b59629ceeeb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transformable: {fileID: 1490902565616352497}
+  _grabbable: {fileID: 1490902565616352497}
   _pointableInteractable: {fileID: 1490902565616352498}
 --- !u!114 &1490902565616352502
 MonoBehaviour:
@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bedaac29a943f844a7074b53c8bdf9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transformable: {fileID: 1490902565616352497}
+  _grabbable: {fileID: 1490902565616352497}
   _rigidbody: {fileID: 1490902565616352499}
   _scaleMassWithSize: 1
 --- !u!114 &7213071759586751634
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f5531e0e19dff046a5b9f58ee68fe2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transformable: {fileID: 1490902565616352497}
+  _grabbable: {fileID: 1490902565616352497}
   _onAdd:
     m_PersistentCalls:
       m_Calls: []
@@ -401,6 +401,7 @@ MonoBehaviour:
   _vectorProperties: []
   _colorProperties: []
   _floatProperties: []
+  _updateEveryFrame: 1
 --- !u!1001 &1490902563871520591
 PrefabInstance:
   m_ObjectHideFlags: 0

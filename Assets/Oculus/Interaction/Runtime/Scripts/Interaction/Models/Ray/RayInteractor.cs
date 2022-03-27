@@ -13,11 +13,16 @@ permissions and limitations under the License.
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Oculus.Interaction.Surfaces;
 
 namespace Oculus.Interaction
 {
-    public class RayInteractor : Interactor<RayInteractor, RayInteractable>
+    public class RayInteractor : Interactor<RayInteractor, RayInteractable>,
+        ICandidatePosition
     {
+        [SerializeField, Interface(typeof(ISelector))]
+        private MonoBehaviour _selector;
+
         [SerializeField]
         private Transform _rayOrigin;
 
@@ -28,12 +33,35 @@ namespace Oculus.Interaction
         public Quaternion Rotation { get; protected set; }
         public Vector3 Forward { get; protected set; }
         public Vector3 End { get; set; }
-        public float MaxRayLength => _maxRayLength;
-        public RaycastHit? CollisionInfo { get; set; }
+
+        public float MaxRayLength
+        {
+            get
+            {
+                return _maxRayLength;
+            }
+            set
+            {
+                _maxRayLength = value;
+            }
+        }
+
+        public SurfaceHit? CollisionInfo { get; protected set; }
+        public Ray Ray { get; protected set; }
+
+        private Vector3 _candidatePosition;
+        public Vector3 CandidatePosition => _candidatePosition;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            Selector = _selector as ISelector;
+        }
 
         protected override void Start()
         {
             base.Start();
+            Assert.IsNotNull(Selector);
             Assert.IsNotNull(_rayOrigin);
         }
 
@@ -42,30 +70,27 @@ namespace Oculus.Interaction
             Origin = _rayOrigin.transform.position;
             Rotation = _rayOrigin.transform.rotation;
             Forward = Rotation * Vector3.forward;
+            Ray = new Ray(Origin, Forward);
         }
 
         protected override RayInteractable ComputeCandidate()
         {
-            RayInteractable closestInteractable = null;
-
-            float closestDist = float.MaxValue;
-
-            End = Origin + MaxRayLength * Forward;
-            Ray ray = new Ray(Origin, Forward);
-
             CollisionInfo = null;
+
+            RayInteractable closestInteractable = null;
+            float closestDist = float.MaxValue;
             IEnumerable<RayInteractable> interactables = RayInteractable.Registry.List(this);
+
             foreach (RayInteractable interactable in interactables)
             {
-                Collider collider = interactable.Collider;
-                RaycastHit hitInfo;
-                if (collider.Raycast(ray, out hitInfo, MaxRayLength))
+                if (interactable.Raycast(Ray, out SurfaceHit hit, MaxRayLength, false))
                 {
-                    if (hitInfo.distance < closestDist)
+                    if (hit.Distance < closestDist)
                     {
-                        closestDist = hitInfo.distance;
+                        closestDist = hit.Distance;
                         closestInteractable = interactable;
-                        CollisionInfo = hitInfo;
+                        CollisionInfo = hit;
+                        _candidatePosition = hit.Point;
                     }
                 }
             }
@@ -80,41 +105,34 @@ namespace Oculus.Interaction
         {
             CollisionInfo = null;
 
-            // set default end position and update if interactable is involved.
-            End = Origin + MaxRayLength * Forward;
-
-            if (interactable != null)
+            if (interactable != null &&
+                interactable.Raycast(Ray, out SurfaceHit hit, MaxRayLength, true))
             {
-                Ray ray = new Ray(Origin, Forward);
-
-                Collider collider = interactable.Collider;
-                RaycastHit hitInfo;
-                if (collider.Raycast(ray, out hitInfo, MaxRayLength))
-                {
-                    End = hitInfo.point;
-                    CollisionInfo = hitInfo;
-                }
-                else
-                {
-                    End = Origin + MaxRayLength * Forward;
-                }
+                End = hit.Point;
+                CollisionInfo = hit;
+            }
+            else
+            {
+                End = Origin + MaxRayLength * Forward;
             }
         }
 
         #region Inject
-        public void InjectAllRayInteractor(Transform rayOrigin)
+        public void InjectAllRayInteractor(ISelector selector, Transform rayOrigin)
         {
+            InjectSelector(selector);
             InjectRayOrigin(rayOrigin);
+        }
+
+        public void InjectSelector(ISelector selector)
+        {
+            _selector = selector as MonoBehaviour;
+            Selector = selector;
         }
 
         public void InjectRayOrigin(Transform rayOrigin)
         {
             _rayOrigin = rayOrigin;
-        }
-
-        public void InjectOptionalMaxRayLength(float maxRayLength)
-        {
-            _maxRayLength = maxRayLength;
         }
         #endregion
     }

@@ -53,9 +53,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 20
+  MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -144,16 +144,16 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 21ddc34a9e2a4184884d0ac0d16e5a52, type: 3}
   - {fileID: 8300000, guid: 7774adc1dddd0814380db576766b7efb, type: 3}
   - {fileID: 8300000, guid: 11f00901e96c8d34687e2b184c356f9d, type: 3}
-  _volume: 0.08
+  _volume: 0.2
   _volumeRandomization:
     _useRandomRange: 1
-    _min: 0.25
-    _max: 0.3
+    _min: 0.5
+    _max: 0.7
   _pitch: 1
   _pitchRandomization:
     _useRandomRange: 1
-    _min: 0.98
-    _max: 1.02
+    _min: 1.05
+    _max: 0.95
   _spatialize: 1
   _loop: 0
   _chanceToPlay: 100

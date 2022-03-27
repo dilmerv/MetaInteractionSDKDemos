@@ -385,7 +385,7 @@ public class OVRExternalComposition : OVRComposition
 				OVRMixedReality.fakeCameraEyeLevelPosition :
 				OVRMixedReality.fakeCameraFloorLevelPosition;
 			trackingSpacePose.orientation = OVRMixedReality.fakeCameraRotation;
-			worldSpacePose = OVRExtensions.ToWorldSpacePose(trackingSpacePose);
+			worldSpacePose = OVRExtensions.ToWorldSpacePose(trackingSpacePose, mainCamera);
 
 			backgroundCamera.fieldOfView = OVRMixedReality.fakeCameraFov;
 			backgroundCamera.aspect = OVRMixedReality.fakeCameraAspect;
@@ -426,7 +426,7 @@ public class OVRExternalComposition : OVRComposition
 				}
 				else
 				{
-					OVRPose worldSpacePose = ComputeCameraWorldSpacePose(extrinsics);
+					OVRPose worldSpacePose = ComputeCameraWorldSpacePose(extrinsics, mainCamera);
 					backgroundCamera.transform.FromOVRPose(worldSpacePose);
 					foregroundCamera.transform.FromOVRPose(worldSpacePose);
 				}

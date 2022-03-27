@@ -59,10 +59,10 @@ namespace Oculus.Interaction.Throw
 
         [SerializeField]
         [Tooltip("The reference position is the center of mass of the hand or controller." +
-            " Use this in case the computed center of mass is not entirely correct.")]
+            " Use this offset this in case the computed center of mass is not entirely correct.")]
         private Vector3 _referenceOffset = Vector3.zero;
 
-        [SerializeField, Tooltip("Related to buffering velocities, used for final release " +
+        [SerializeField, Tooltip("Related to buffering velocities; used for final " +
             "velocity calculation.")]
         private BufferingParams _bufferingParams;
 
@@ -79,7 +79,7 @@ namespace Oculus.Interaction.Throw
         [SerializeField]
         [Range(0.0f, 1.0f), Tooltip("Influence of external velocities upon release. For hands, " +
             "this can include fingers.")]
-        private float _fingerSpeedInfluence = 0.0f;
+        private float _externalVelocityInfluence = 0.0f;
 
         [SerializeField, Tooltip("Time of anticipated release. Hand tracking " +
             "might experience greater latency compared to controllers.")]
@@ -146,15 +146,15 @@ namespace Oculus.Interaction.Throw
             }
         }
 
-        public float FingerSpeedInfluence
+        public float ExternalVelocityInfluence
         {
             get
             {
-                return _fingerSpeedInfluence;
+                return _externalVelocityInfluence;
             }
             set
             {
-                _fingerSpeedInfluence = value;
+                _externalVelocityInfluence = value;
             }
         }
 
@@ -198,14 +198,22 @@ namespace Oculus.Interaction.Throw
         public Vector3 AddedTrendLinearVelocity { get; private set; }
         public Vector3 AddedTangentialLinearVelocity { get; private set; }
 
+        /// <summary>
+        /// Tangential velocity information, updated upon release.
+        /// </summary>
+        public Vector3 AxisOfRotation { get; private set; }
+        public Vector3 CenterOfMassToObject { get; private set; }
+        public Vector3 TangentialDirection { get; private set; }
+        public Vector3 AxisOfRotationOrigin { get; private set; }
+
         List<ReleaseVelocityInformation> _currentThrowVelocities = new List<ReleaseVelocityInformation>();
 
         public event Action<List<ReleaseVelocityInformation>> WhenThrowVelocitiesChanged = delegate { };
 
         public event Action<ReleaseVelocityInformation> WhenNewSampleAvailable = delegate { };
 
-        private Vector3 _linearVelocity;
-        private Vector3 _angularVelocity;
+        private Vector3 _linearVelocity = Vector3.zero;
+        private Vector3 _angularVelocity = Vector3.zero;
 
         private Vector3? _previousReferencePosition;
         private Quaternion? _previousReferenceRotation;
@@ -248,7 +256,7 @@ namespace Oculus.Interaction.Throw
 
             IncludeTangentialInfluence(ref linearVelocity, objectThrown.position);
 
-            IncludeExternalVelocities(ref linearVelocity);
+            IncludeExternalVelocities(ref linearVelocity, ref angularVelocity);
 
             _currentThrowVelocities.Clear();
             // queue items in order from lastWritePos to earliest sample
@@ -306,7 +314,7 @@ namespace Oculus.Interaction.Throw
 
             int beforeIndex, afterIndex;
             float lookupTime = Time.time - _stepBackTime;
-            (beforeIndex, afterIndex) = FindPoseIndicesBasedOnTime(lookupTime);
+            (beforeIndex, afterIndex) = FindPoseIndicesAdjacentToTime(lookupTime);
 
             if (beforeIndex < 0 || afterIndex < 0)
             {
@@ -340,9 +348,9 @@ namespace Oculus.Interaction.Throw
         {
             Vector3 trendLinearVelocity, trendAngularVelocity;
             (trendLinearVelocity, trendAngularVelocity) = ComputeTrendVelocities();
-            AddedTrendLinearVelocity = trendLinearVelocity * + _trendVelocityInfluence;
+            AddedTrendLinearVelocity = trendLinearVelocity * _trendVelocityInfluence;
             linearVelocity += AddedTrendLinearVelocity;
-            angularVelocity += trendLinearVelocity * _trendVelocityInfluence;
+            angularVelocity += trendAngularVelocity * _trendVelocityInfluence;
         }
 
         private void IncludeTangentialInfluence(ref Vector3 linearVelocity, Vector3 interactablePosition)
@@ -353,27 +361,43 @@ namespace Oculus.Interaction.Throw
             linearVelocity += AddedTangentialLinearVelocity;
         }
 
-        private void IncludeExternalVelocities(ref Vector3 linearVelocity)
+        private void IncludeExternalVelocities(ref Vector3 linearVelocity, ref Vector3 angularVelocity)
         {
             Vector3 extraLinearVelocity, extraAngularVelocity;
             (extraLinearVelocity, extraAngularVelocity) = ThrowInputDevice.GetExternalVelocities();
-            float addedFingerSpeed = extraLinearVelocity.magnitude * _fingerSpeedInfluence;
-            linearVelocity += linearVelocity.normalized * addedFingerSpeed;
+            float addedExternalSpeed = extraLinearVelocity.magnitude * _externalVelocityInfluence;
+            linearVelocity += linearVelocity.normalized * addedExternalSpeed;
+            float addedExternalAngularSpeed = extraAngularVelocity.magnitude * _externalVelocityInfluence;
+            angularVelocity += angularVelocity.normalized * addedExternalAngularSpeed;
         }
 
-        private (int, int) FindPoseIndicesBasedOnTime(float time)
+        private (int, int) FindPoseIndicesAdjacentToTime(float time)
         {
+            if (_lastWritePos < 0)
+            {
+                return (-1, -1);
+            }
             int beforeIndex = -1, afterIndex = -1;
 
             int numPoses = _bufferedPoses.Count;
-            for (int i = 0; i < numPoses-1; i++)
+            for (int readPos = _lastWritePos, itemsRead = 0;
+                itemsRead < numPoses; readPos--, itemsRead++)
             {
-                var currPose = _bufferedPoses[i];
-                var nextPose = _bufferedPoses[i + 1];
-                if (currPose.Time < time && nextPose.Time > time)
+                if (readPos < 0)
                 {
-                    beforeIndex = i;
-                    afterIndex = i + 1;
+                    readPos = numPoses - 1;
+                }
+                int prevReadPos = readPos - 1;
+                if (prevReadPos < 0)
+                {
+                    prevReadPos = numPoses - 1;
+                }
+                var currPose = _bufferedPoses[readPos];
+                var prevPose = _bufferedPoses[prevReadPos];
+                if (currPose.Time > time && prevPose.Time < time)
+                {
+                    beforeIndex = prevReadPos;
+                    afterIndex = readPos;
                 }
             }
 
@@ -386,23 +410,24 @@ namespace Oculus.Interaction.Throw
             Vector3 trendAngularVelocity = Vector3.zero;
             if (_bufferedPoses.Count == 0)
             {
-                return (trendLinearVelocity, trendAngularVelocity);
+                return (Vector3.zero, Vector3.zero);
             }
 
             if (BufferedVelocitiesValid())
             {
                 FindLargestWindowWithMovement();
-                if (_windowWithMovement.Count == 0)
+                int numItemsWithMovement = _windowWithMovement.Count;
+                if (numItemsWithMovement == 0)
                 {
-                    return (trendAngularVelocity, trendAngularVelocity);
+                    return (Vector3.zero, Vector3.zero);
                 }
                 foreach (var item in _windowWithMovement)
                 {
                     trendLinearVelocity += item.LinearVelocity;
                     trendAngularVelocity += item.AngularVelocity;
                 }
-                trendLinearVelocity /= _bufferedPoses.Count;
-                trendAngularVelocity /= _bufferedPoses.Count;
+                trendLinearVelocity /= numItemsWithMovement;
+                trendAngularVelocity /= numItemsWithMovement;
             }
             else
             {
@@ -415,8 +440,8 @@ namespace Oculus.Interaction.Throw
 
         /// <summary>
         /// Do we have enough buffered velocities to derive some sort of trend?
-        /// If not, return false. This can happen when a user performs a very fast over or
-        /// underhand throw where most velocities are zero.
+        /// If not, return false. This can happen when a user performs a very fast
+        /// overhand or underhand throw that results in mostly zero velocities.
         /// </summary>
         /// <returns></returns>
         private bool BufferedVelocitiesValid()
@@ -443,12 +468,12 @@ namespace Oculus.Interaction.Throw
         private void FindLargestWindowWithMovement()
         {
             int numPoses = _bufferedPoses.Count;
-            bool newWindowFound = false;
+            bool processingMovementWindow = false;
             _windowWithMovement.Clear();
             _tempWindow.Clear();
             Vector3 initialVector = Vector3.zero;
 
-            // start backwards from last sample
+            // start backwards from last written sample
             for (int readPos = _lastWritePos, itemsRead = 0;
                 itemsRead < numPoses; readPos--, itemsRead++)
             {
@@ -461,9 +486,9 @@ namespace Oculus.Interaction.Throw
                 bool currentItemHasMovement = item.LinearVelocity.sqrMagnitude > 0.0f;
                 if (currentItemHasMovement)
                 {
-                    if (!newWindowFound)
+                    if (!processingMovementWindow)
                     {
-                        newWindowFound = true;
+                        processingMovementWindow = true;
                         _tempWindow.Clear();
                         initialVector = item.LinearVelocity;
                     }
@@ -476,9 +501,9 @@ namespace Oculus.Interaction.Throw
                     }
                 }
                 // end of window when we hit something with no speed
-                else if (!currentItemHasMovement && newWindowFound)
+                else if (!currentItemHasMovement && processingMovementWindow)
                 {
-                    newWindowFound = false;
+                    processingMovementWindow = false;
                     if (_tempWindow.Count > _windowWithMovement.Count)
                     {
                         TransferToDestBuffer(_tempWindow, _windowWithMovement);
@@ -487,7 +512,7 @@ namespace Oculus.Interaction.Throw
             }
 
             // in case window continues till end of buffer
-            if (newWindowFound)
+            if (processingMovementWindow)
             {
                 if (_tempWindow.Count > _windowWithMovement.Count)
                 {
@@ -525,7 +550,8 @@ namespace Oculus.Interaction.Throw
             return (linearVelocity, angularVelocity);
         }
 
-        private void TransferToDestBuffer(List<SamplePoseData> source, List<SamplePoseData> dest)
+        private void TransferToDestBuffer(List<SamplePoseData> source,
+            List<SamplePoseData> dest)
         {
             dest.Clear();
             foreach (var sourceItem in source)
@@ -549,10 +575,20 @@ namespace Oculus.Interaction.Throw
 
             Vector3 centerOfMassToObject = objectPosition - _previousReferencePosition.Value;
             float radius = centerOfMassToObject.magnitude;
+            if (radius < Mathf.Epsilon)
+            {
+                return Vector3.zero;
+            }
+
             Vector3 centerOfMassToObjectNorm = centerOfMassToObject.normalized;
             Vector3 axisOfRotation = _angularVelocity.normalized;
             Vector3 tangentialDirection = Vector3.Cross(axisOfRotation, centerOfMassToObjectNorm);
             // https://byjus.com/tangential-velocity-formula/
+            // https://www.toppr.com/guides/physics-formulas/tangential-velocity-formula/
+            AxisOfRotation = axisOfRotation;
+            TangentialDirection = tangentialDirection;
+            CenterOfMassToObject = centerOfMassToObjectNorm * radius;
+            AxisOfRotationOrigin = objectPosition;
             return tangentialDirection * radius * angularVelocityMag;
         }
 
@@ -563,6 +599,12 @@ namespace Oculus.Interaction.Throw
 
         public void SetUpdateFrequency(float frequency)
         {
+            if (frequency < Mathf.Epsilon)
+            {
+                Debug.LogError($"Provided frequency ${frequency} must be " +
+                    $"greater than or equal to zero.");
+                return;
+            }
             _updateFrequency = frequency;
             _updateLatency = 1.0f / _updateFrequency;
         }
@@ -586,16 +628,17 @@ namespace Oculus.Interaction.Throw
             referencePose = new Pose(
                 _referenceOffset + referencePose.position,
                 referencePose.rotation);
-            UpdateVelocitiesAndBuffer(Time.deltaTime, referencePose);
+            CalculateLatestVelocitiesAndUpdateBuffer(Time.deltaTime, referencePose);
         }
 
-        private void UpdateVelocitiesAndBuffer(float delta, Pose referencePose)
+        private void CalculateLatestVelocitiesAndUpdateBuffer(float delta, Pose referencePose)
         {
             _accumulatedDelta += delta;
 
             UpdateLatestVelocitiesAndPoseValues(referencePose, _accumulatedDelta);
             _accumulatedDelta = 0.0f;
-            int nextWritePos = (_lastWritePos < 0) ? 0 :
+            int nextWritePos = (_lastWritePos < 0) ?
+                0 :
                 (_lastWritePos + 1) % _bufferSize;
             var newPose = new SamplePoseData(referencePose, _linearVelocity,
                 _angularVelocity, Time.time);
@@ -626,6 +669,7 @@ namespace Oculus.Interaction.Throw
         private (Vector3, Vector3) GetLatestLinearAndAngularVelocities(Pose referencePose,
             float delta)
         {
+            // Don't compute any values if they would result in NaN.
             if (!_previousReferencePosition.HasValue || delta < Mathf.Epsilon)
             {
                 return (Vector3.zero, Vector3.zero);

@@ -30,7 +30,7 @@ namespace Oculus.Interaction.Samples
         private Quaternion _initialRotation;
         private Vector3 _initialScale;
 
-        private TwoHandFreeTransformer[] _freeTransformers;
+        private TwoGrabFreeTransformer[] _freeTransformers;
         private Rigidbody _rigidBody;
 
         protected virtual void OnEnable()
@@ -38,7 +38,7 @@ namespace Oculus.Interaction.Samples
             _initialPosition = transform.position;
             _initialRotation = transform.rotation;
             _initialScale = transform.localScale;
-            _freeTransformers = GetComponents<TwoHandFreeTransformer>();
+            _freeTransformers = GetComponents<TwoGrabFreeTransformer>();
             _rigidBody = GetComponent<Rigidbody>();
         }
 

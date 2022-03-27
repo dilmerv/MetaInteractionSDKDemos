@@ -11,8 +11,8 @@ permissions and limitations under the License.
 ************************************************************************************/
 
 using Oculus.Interaction.Input;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Oculus.Interaction.HandPosing
 {
@@ -89,7 +89,22 @@ namespace Oculus.Interaction.HandPosing
 
         public HandPose()
         {
+#if UNITY_EDITOR
+            var jointCollection = HandSkeletonOVR.CreateSkeletonData(_handedness).Joints;
+            int offset = (int)FingersMetadata.HAND_JOINT_IDS[0];
+            for (int i = 0; i < FingersMetadata.HAND_JOINT_IDS.Length; i++)
+            {
+                HandJointId jointID = FingersMetadata.HAND_JOINT_IDS[i];
+                JointRotations[i] = jointCollection[i + offset].pose.rotation;
+            }
+#endif
         }
+
+        public HandPose(Handedness handedness)
+        {
+            _handedness = handedness;
+        }
+
 
         public HandPose(HandPose other)
         {
@@ -105,16 +120,26 @@ namespace Oculus.Interaction.HandPosing
         /// fixed size and order.
         /// </summary>
         /// <param name="from">The hand pose to copy the values from</param>
-        public void CopyFrom(HandPose from)
+        /// <param name="mirrorHandedness">Invert the received handedness</param>
+        public void CopyFrom(HandPose from, bool mirrorHandedness = false)
         {
-            this.Handedness = from.Handedness;
+            if (mirrorHandedness)
+            {
+
+            }
+            else
+            {
+                _handedness = from.Handedness;
+            }
+
             for (int i = 0; i < Constants.NUM_FINGERS; i++)
             {
-                this.FingersFreedom[i] = from.FingersFreedom[i];
+                FingersFreedom[i] = from.FingersFreedom[i];
             }
+
             for (int i = 0; i < FingersMetadata.HAND_JOINT_IDS.Length; i++)
             {
-                this.JointRotations[i] = from.JointRotations[i];
+                JointRotations[i] = from.JointRotations[i];
             }
         }
 
@@ -132,8 +157,8 @@ namespace Oculus.Interaction.HandPosing
                 result.JointRotations[i] = Quaternion.SlerpUnclamped(from.JointRotations[i], to.JointRotations[i], t);
             }
 
-            HandPose dominantPose = t <= 0.5f? from : to;
-            result.Handedness = dominantPose.Handedness;
+            HandPose dominantPose = t <= 0.5f ? from : to;
+            result._handedness = dominantPose.Handedness;
             for (int i = 0; i < Constants.NUM_FINGERS; i++)
             {
                 result.FingersFreedom[i] = dominantPose.FingersFreedom[i];

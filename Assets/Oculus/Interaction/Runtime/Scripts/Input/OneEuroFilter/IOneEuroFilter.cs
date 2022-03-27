@@ -35,5 +35,10 @@ namespace Oculus.Interaction.Input
         /// Omitting this value will fallback to <see cref="OneEuroFilter._DEFAULT_FREQUENCY_HZ"/></param>
         /// <returns>The filtered value, equivalent to <see cref="Value"/></returns>
         TData Step(TData rawValue, float deltaTime = 1f / OneEuroFilter._DEFAULT_FREQUENCY_HZ);
+
+        /// <summary>
+        /// Clear previous values and reset the filter
+        /// </summary>
+        void Reset();
     }
 }

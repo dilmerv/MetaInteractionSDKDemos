@@ -92,7 +92,6 @@ GameObject:
   - component: {fileID: 2519953544252300547}
   - component: {fileID: 7983261105550752962}
   - component: {fileID: 8105528931859149806}
-  - component: {fileID: 1448436451981655305}
   - component: {fileID: 4526630446865022760}
   m_Layer: 0
   m_Name: ControllerRayInteractor
@@ -143,24 +142,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4733c5f009d26ad49b3685117b8d3eb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _activeState: {fileID: 0}
   _interactableFilters: []
+  _selector: {fileID: 5225959746004463820}
   _rayOrigin: {fileID: 3098293304965358369}
   _maxRayLength: 5
---- !u!114 &1448436451981655305
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2519953544252300544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba7282e6cbb44d94b9399c80f4c2c7e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interactor: {fileID: 8105528931859149806}
-  _selector: {fileID: 5225959746004463820}
-  _activeState: {fileID: 0}
 --- !u!114 &4526630446865022760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,6 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rayInteractor: {fileID: 8105528931859149806}
+  _renderer: {fileID: 4176813230014812420}
   _materialPropertyBlockEditor: {fileID: 1678756800000762683}
   _maxRayVisualLength: 0.5
   _hoverColor0: {r: 0.9921569, g: 0.9921569, b: 0.9921569, a: 1}
@@ -292,6 +279,7 @@ MonoBehaviour:
   _vectorProperties: []
   _colorProperties: []
   _floatProperties: []
+  _updateEveryFrame: 1
 --- !u!1 &6119064598566543825
 GameObject:
   m_ObjectHideFlags: 0

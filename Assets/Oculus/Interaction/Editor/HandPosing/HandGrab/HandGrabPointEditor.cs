@@ -15,10 +15,10 @@ using Oculus.Interaction.HandPosing.Visuals;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Oculus.Interaction.Editor;
 
 namespace Oculus.Interaction.HandPosing.Editor
 {
-    [CanEditMultipleObjects]
     [CustomEditor(typeof(HandGrabPoint))]
     public class HandGrabPointEditor : UnityEditor.Editor
     {
@@ -29,14 +29,11 @@ namespace Oculus.Interaction.HandPosing.Editor
         private HandPuppet _ghostPuppet;
         private Handedness _lastHandedness;
 
-        private HandPose _poseTransfer;
         private bool _editingFingers;
 
         private SerializedProperty _handPoseProperty;
 
         private const float GIZMO_SCALE = 0.005f;
-        private static readonly Color FLEX_COLOR = new Color(0f, 1f, 1f, 0.5f);
-        private static readonly Color SPREAD_COLOR = new Color(0.5f, 0.3f, 1f, 0.5f);
 
         private void Awake()
         {
@@ -95,8 +92,8 @@ namespace Oculus.Interaction.HandPosing.Editor
 
         public void OnSceneGUI()
         {
-            SceneView view = SceneView.currentDrawingSceneView;
-            if (view == null || _handGhost == null)
+            if (SceneView.currentDrawingSceneView == null
+                || _handGhost == null)
             {
                 return;
             }
@@ -112,26 +109,6 @@ namespace Oculus.Interaction.HandPosing.Editor
             else
             {
                 GhostFollowSurface();
-            }
-        }
-
-
-        private void EditSnapPoint(Transform snapPoint)
-        {
-            Vector3 pos = snapPoint.position;
-            Quaternion rot = snapPoint.rotation;
-            Handles.TransformHandle(ref pos, ref rot);
-
-            if (pos != snapPoint.position)
-            {
-                Undo.RecordObject(snapPoint.transform, "SnapPoint Position");
-                snapPoint.position = pos;
-            }
-
-            if (rot != snapPoint.rotation)
-            {
-                Undo.RecordObject(snapPoint.transform, "SnapPoint Rotation");
-                snapPoint.rotation = rot;
             }
         }
 
@@ -192,11 +169,7 @@ namespace Oculus.Interaction.HandPosing.Editor
                 return;
             }
 
-            HandGhostProvider[] providers = Resources.FindObjectsOfTypeAll<HandGhostProvider>();
-            if (providers != null && providers.Length > 0)
-            {
-                _ghostVisualsProvider = providers[0];
-            }
+            HandGhostProvider.TryGetDefault(out _ghostVisualsProvider);
         }
 
         private void RegenerateGhost(HandGhostProvider provider)
@@ -222,10 +195,12 @@ namespace Oculus.Interaction.HandPosing.Editor
 
         private void DestroyGhost()
         {
-            if (_handGhost != null)
+            if (_handGhost == null)
             {
-                GameObject.DestroyImmediate(_handGhost.gameObject);
+                return;
             }
+            GameObject.DestroyImmediate(_handGhost.gameObject);
+            _handGhost = null;
         }
 
         private void GhostFollowSurface()
@@ -263,9 +238,9 @@ namespace Oculus.Interaction.HandPosing.Editor
 
         private void TransferGhostBoneRotations()
         {
-            _poseTransfer = _handGrabPoint.HandPose;
-            _ghostPuppet.CopyCachedJoints(ref _poseTransfer);
-            _handGrabPoint.HandPose.CopyFrom(_poseTransfer);
+            HandPose poseTransfer = _handGrabPoint.HandPose;
+            _ghostPuppet.CopyCachedJoints(ref poseTransfer);
+            EditorUtility.SetDirty(_handGrabPoint);
         }
 
         private void DrawBonesRotator(List<HandJointMap> bones)
@@ -280,13 +255,13 @@ namespace Oculus.Interaction.HandPosing.Editor
                     continue;
                 }
 
-                Handles.color = FLEX_COLOR;
+                Handles.color = EditorConstants.PRIMARY_COLOR;
                 Quaternion rotation = Handles.Disc(bone.transform.rotation, bone.transform.position,
                     bone.transform.forward, GIZMO_SCALE, false, 0);
 
                 if (FingersMetadata.HAND_JOINT_CAN_SPREAD[metadataIndex])
                 {
-                    Handles.color = SPREAD_COLOR;
+                    Handles.color = EditorConstants.SECONDARY_COLOR;
                     rotation = Handles.Disc(rotation, bone.transform.position,
                         bone.transform.up, GIZMO_SCALE, false, 0);
                 }

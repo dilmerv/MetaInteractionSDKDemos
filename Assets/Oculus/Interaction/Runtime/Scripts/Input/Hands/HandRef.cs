@@ -46,10 +46,10 @@ namespace Oculus.Interaction.Input
         public Transform TrackingToWorldSpace => Hand.TrackingToWorldSpace;
         public int CurrentDataVersion => Hand.CurrentDataVersion;
 
-        public event Action HandUpdated
+        public event Action WhenHandUpdated
         {
-            add => Hand.HandUpdated += value;
-            remove => Hand.HandUpdated -= value;
+            add => Hand.WhenHandUpdated += value;
+            remove => Hand.WhenHandUpdated -= value;
         }
 
         public bool Active => IsConnected;

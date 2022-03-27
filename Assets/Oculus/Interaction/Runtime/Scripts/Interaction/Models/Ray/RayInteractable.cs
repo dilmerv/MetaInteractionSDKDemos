@@ -13,7 +13,7 @@ permissions and limitations under the License.
 using System;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Serialization;
+using Oculus.Interaction.Surfaces;
 
 namespace Oculus.Interaction
 {
@@ -23,13 +23,20 @@ namespace Oculus.Interaction
         private Collider _collider;
         public Collider Collider { get => _collider; }
 
-        [SerializeField, Optional]
-        private Transform _pointablePlane = null;
+        [SerializeField, Optional, Interface(typeof(IPointableSurface))]
+        private MonoBehaviour _surface = null;
+
+        private IPointableSurface Surface;
 
         public event Action<PointerArgs> OnPointerEvent = delegate { };
         private PointableDelegate<RayInteractor> _pointableDelegate;
 
         protected bool _started = false;
+
+        protected virtual void Awake()
+        {
+            Surface = _surface as IPointableSurface;
+        }
 
         protected virtual void Start()
         {
@@ -62,31 +69,36 @@ namespace Oculus.Interaction
             OnPointerEvent(args);
         }
 
-        private  void ComputePointer(RayInteractor rayInteractor, out Vector3 position, out Quaternion rotation)
+        public bool Raycast(Ray ray, out SurfaceHit hit, in float maxDistance, in bool useSurface)
         {
-            if (_pointablePlane != null)
+            hit = new SurfaceHit();
+            if (Collider.Raycast(ray, out RaycastHit raycastHit, maxDistance))
             {
-                var plane = new Plane(-1f * _pointablePlane.forward, _pointablePlane.position);
-                var ray = new Ray(rayInteractor.Origin, rayInteractor.Rotation * Vector3.forward);
-
-                float enter;
-                if (plane.Raycast(ray, out enter))
-                {
-                    position = ray.GetPoint(enter);
-                    rotation = Quaternion.LookRotation(-1f * _pointablePlane.forward);
-                    return;
-                }
+                hit.Point = raycastHit.point;
+                hit.Normal = raycastHit.normal;
+                hit.Distance = raycastHit.distance;
+                return true;
             }
+            else if (useSurface && Surface != null)
+            {
+                return Surface.Raycast(ray, out hit, maxDistance);
+            }
+            return false;
+        }
 
-            rotation = rayInteractor.Rotation;
-
+        private void ComputePointer(RayInteractor rayInteractor, out Vector3 position, out Quaternion rotation)
+        {
             if (rayInteractor.CollisionInfo != null)
             {
-                position = rayInteractor.CollisionInfo.Value.point;
+                position = rayInteractor.CollisionInfo.Value.Point;
+                rotation = Quaternion.LookRotation(rayInteractor.CollisionInfo.Value.Normal);
                 return;
             }
-
-            position = Vector3.zero;
+            else
+            {
+                position = Vector3.zero;
+                rotation = rayInteractor.Rotation;
+            }
         }
 
         protected virtual void OnDestroy()
@@ -106,9 +118,10 @@ namespace Oculus.Interaction
             _collider = collider;
         }
 
-        public void InjectOptionalPointablePlane(Transform pointablePlane)
+        public void InjectOptionalSurface(IPointableSurface surface)
         {
-            _pointablePlane = pointablePlane;
+            Surface = surface;
+            _surface = surface as MonoBehaviour;
         }
 
         #endregion

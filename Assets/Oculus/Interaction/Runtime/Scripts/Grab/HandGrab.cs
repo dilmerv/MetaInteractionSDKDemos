@@ -53,7 +53,7 @@ namespace Oculus.Interaction.Grab
 
             if (SupportsPinch(interactor, interactable))
             {
-                HandFingerFlags pinchFingers = api.HandPinchingFinger();
+                HandFingerFlags pinchFingers = api.HandPinchGrabbingFingers();
                 if (api.IsSustainingGrab(interactable.PinchGrabRules, pinchFingers))
                 {
                     cache.SupportedGrabTypes |= GrabTypeFlags.Pinch;
@@ -63,7 +63,7 @@ namespace Oculus.Interaction.Grab
             if (SupportsPalm(interactor, interactable))
             {
                 HandFingerFlags palmFingers = api.HandPalmGrabbingFingers();
-                if(api.IsSustainingGrab(interactable.PalmGrabRules, palmFingers))
+                if (api.IsSustainingGrab(interactable.PalmGrabRules, palmFingers))
                 {
                     cache.SupportedGrabTypes |= GrabTypeFlags.Palm;
                     cache.PalmGrabRules = new GrabbingRule(palmFingers, interactable.PalmGrabRules);
@@ -131,7 +131,7 @@ namespace Oculus.Interaction.Grab
             IHandGrabInteractable interactable)
         {
             HandGrabAPI api = interactor.HandGrabApi;
-            HandFingerFlags pinchFingers = api.HandPinchingFinger();
+            HandFingerFlags pinchFingers = api.HandPinchGrabbingFingers();
             HandFingerFlags palmFingers = api.HandPalmGrabbingFingers();
 
             if (interactable.SupportedGrabTypes == GrabTypeFlags.None)
@@ -152,7 +152,6 @@ namespace Oculus.Interaction.Grab
             if (SupportsPinch(interactor, interactable.SupportedGrabTypes))
             {
                 pinchHolding = api.IsSustainingGrab(interactable.PinchGrabRules, pinchFingers);
-
                 if (api.IsHandUnselectPinchFingersChanged(interactable.PinchGrabRules))
                 {
                     pinchReleased = true;
@@ -184,7 +183,7 @@ namespace Oculus.Interaction.Grab
 
             if (SupportsPinch(interactor, interactable))
             {
-                HandFingerFlags pinchingFingers = api.HandPinchingFinger();
+                HandFingerFlags pinchingFingers = api.HandPinchGrabbingFingers();
                 interactable.PinchGrabRules.StripIrrelevant(ref pinchingFingers);
                 fingers = fingers | pinchingFingers;
             }

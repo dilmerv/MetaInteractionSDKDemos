@@ -11,12 +11,16 @@
  **************************************************************************************************/
 
 using Facebook.WitAi.Data.Configuration;
+using Facebook.WitAi.Windows;
+using Oculus.Voice.Utility;
 using UnityEditor;
+using UnityEngine;
 
 namespace Oculus.Voice.Inspectors
 {
     [CustomEditor(typeof(WitConfiguration))]
     public class AppVoiceExperienceWitConfigurationEditor : WitConfigurationEditor
     {
+        protected override Texture2D HeaderIcon => VoiceSDKStyles.MainHeader;
     }
 }

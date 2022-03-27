@@ -138,8 +138,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1459148037577990538}
+  - component: {fileID: 7896607432929550461}
   m_Layer: 0
-  m_Name: TriggerPlane
+  m_Name: Surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -159,6 +160,20 @@ Transform:
   m_Father: {fileID: 3291043434726897966}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7896607432929550461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1459148037577990539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cf2a74d69b1c1e41916d2a7afdff5be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _facing: 0
+  _doubleSided: 1
 --- !u!1 &4556222279012277189
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,6 +290,7 @@ MonoBehaviour:
   _vectorProperties: []
   _colorProperties: []
   _floatProperties: []
+  _updateEveryFrame: 1
 --- !u!114 &8886810577242953562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -474,8 +490,9 @@ MonoBehaviour:
   _maxInteractors: -1
   _maxSelectingInteractors: -1
   _proximityField: {fileID: 3545893600555203920}
-  _triggerPlaneTransform: {fileID: 1459148037577990538}
+  _surface: {fileID: 7896607432929550461}
   _maxDistance: 0.015
+  _enterHoverDistance: 0
   _releaseDistance: 0.1
   _horizontalDragThreshold: 0
   _verticalDragThreshold: 0

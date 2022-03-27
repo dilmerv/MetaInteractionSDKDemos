@@ -226,8 +226,8 @@ namespace Oculus.Interaction.HandPosing.SnapSurfaces
 
         protected Pose MinimalRotationPoseAtSurface(in Pose userPose, in Pose snapPose)
         {
-            Quaternion rotCorrection = Quaternion.FromToRotation(snapPose.up, Direction);
-            Vector3 correctedDir = (rotCorrection * userPose.up).normalized;
+            Quaternion rotCorrection = userPose.rotation * Quaternion.Inverse(snapPose.rotation);
+            Vector3 correctedDir = rotCorrection * Direction;
             Vector3 surfacePoint = NearestPointInSurface(Centre + correctedDir * Radius);
             Quaternion surfaceRotation = RotationAtPoint(surfacePoint, snapPose.rotation, userPose.rotation);
             return new Pose(surfacePoint, surfaceRotation);

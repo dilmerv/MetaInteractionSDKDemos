@@ -222,6 +222,7 @@ namespace Oculus.Platform
       User_GetLoggedInUserRecentlyMetUsersAndRooms        = 0x295FBA30,
       User_GetNextUserAndRoomArrayPage                    = 0x7FBDD2DF,
       User_GetNextUserArrayPage                           = 0x267CF743,
+      User_GetNextUserCapabilityArrayPage                 = 0x2309F399,
       User_GetOrgScopedID                                 = 0x18F0B01B,
       User_GetSdkAccounts                                 = 0x67526A83,
       User_GetUserProof                                   = 0x22810483,
@@ -445,6 +446,7 @@ namespace Oculus.Platform
     public virtual SystemVoipState GetSystemVoipState() { return null; }
     public virtual User GetUser() { return null; }
     public virtual UserAndRoomList GetUserAndRoomList() { return null; }
+    public virtual UserCapabilityList GetUserCapabilityList() { return null; }
     public virtual UserDataStoreUpdateResponse GetUserDataStoreUpdateResponse() { return null; }
     public virtual UserList GetUserList() { return null; }
     public virtual UserProof GetUserProof() { return null; }
@@ -819,6 +821,10 @@ namespace Oculus.Platform
         case Message.MessageType.User_GetLoggedInUserFriends:
         case Message.MessageType.User_GetNextUserArrayPage:
           message = new MessageWithUserList(messageHandle);
+          break;
+
+        case Message.MessageType.User_GetNextUserCapabilityArrayPage:
+          message = new MessageWithUserCapabilityList(messageHandle);
           break;
 
         case Message.MessageType.UserDataStore_PrivateDeleteEntryByKey:
@@ -1803,6 +1809,18 @@ namespace Oculus.Platform
       var msg = CAPI.ovr_Message_GetNativeMessage(c_message);
       var obj = CAPI.ovr_Message_GetUserArray(msg);
       return new UserList(obj);
+    }
+
+  }
+  public class MessageWithUserCapabilityList : Message<UserCapabilityList>
+  {
+    public MessageWithUserCapabilityList(IntPtr c_message) : base(c_message) { }
+    public override UserCapabilityList GetUserCapabilityList() { return Data; }
+    protected override UserCapabilityList GetDataFromMessage(IntPtr c_message)
+    {
+      var msg = CAPI.ovr_Message_GetNativeMessage(c_message);
+      var obj = CAPI.ovr_Message_GetUserCapabilityArray(msg);
+      return new UserCapabilityList(obj);
     }
 
   }

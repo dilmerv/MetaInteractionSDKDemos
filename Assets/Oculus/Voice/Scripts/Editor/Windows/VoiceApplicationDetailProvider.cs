@@ -11,45 +11,30 @@
  **************************************************************************************************/
 
 using UnityEngine;
+using UnityEditor;
+using System.Reflection;
 using Facebook.WitAi.Data.Configuration;
+using Facebook.WitAi.Windows;
 
 namespace Oculus.Voice.Windows
 {
-    public class VoiceApplicationDetailProvider : IApplicationDetailProvider
+    public class VoiceApplicationDetailProvider : WitApplicationPropertyDrawer
     {
-        public void DrawApplication(WitApplication application)
+        // Skip fields if voice sdk app id
+        protected override bool ShouldLayoutField(SerializedProperty property, FieldInfo subfield)
         {
-            if (string.IsNullOrEmpty(application.name))
+            string appID = GetFieldStringValue(property, "id").ToLower();
+            if (!string.IsNullOrEmpty(appID) && appID.StartsWith("voice"))
             {
-                GUILayout.Label("Loading...");
-            }
-            else
-            {
-                if (application.id.StartsWith("voice"))
+                switch (subfield.Name)
                 {
-                    InfoField("Name", application.name);
-                    InfoField("Language", application.lang);
-                }
-                else
-                {
-                    InfoField("Name", application.name);
-                    InfoField("ID", application.id);
-                    InfoField("Language", application.lang);
-                    InfoField("Created", application.createdAt);
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label("Private", GUILayout.Width(100));
-                    GUILayout.Toggle(application.isPrivate, "");
-                    GUILayout.EndHorizontal();
+                    case "id":
+                    case "createdAt":
+                    case "isPrivate":
+                        return false;
                 }
             }
-        }
-
-        private void InfoField(string name, string value)
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(name, GUILayout.Width(100));
-            GUILayout.Label(value, "TextField");
-            GUILayout.EndHorizontal();
+            return base.ShouldLayoutField(property, subfield);
         }
     }
 }

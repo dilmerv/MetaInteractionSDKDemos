@@ -161,6 +161,31 @@ public class OVRTrackedKeyboard : MonoBehaviour
 		}
 	}
 
+	public bool RemoteKeyboard
+	{
+		get
+		{
+			if (KeyboardQueryFlags == OVRPlugin.TrackedKeyboardQueryFlags.Local)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		set
+		{
+			if(value == true)
+			{
+				KeyboardQueryFlags = OVRPlugin.TrackedKeyboardQueryFlags.Remote;
+			} else
+			{
+				KeyboardQueryFlags = OVRPlugin.TrackedKeyboardQueryFlags.Local;
+			}
+		}
+	}
+
 	/// <summary>
 	/// Specifies whether to search for local keyboards attached to the headset
 	/// or for remote keyboards not attached to the headset.

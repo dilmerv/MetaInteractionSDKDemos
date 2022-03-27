@@ -23,7 +23,6 @@ namespace Oculus.Voice.Data
     [Serializable]
     public class VoiceSDKDataCreation
     {
-
         [MenuItem("Assets/Create/Voice SDK/Add App Voice Experience to Scene")]
         public static void AddVoiceCommandServiceToScene()
         {
@@ -48,21 +47,16 @@ namespace Oculus.Voice.Data
             WitDataCreation.CreateFloatValue("");
         }
 
-        public static WitFloatValue CreateFloatValue(string path)
-        {
-            return WitDataCreation.CreateFloatValue(path);
-        }
-
         [MenuItem("Assets/Create/Voice SDK/Values/Int Value")]
         public static void WitIntValue()
         {
-            WitDataCreation.CreateStringValue("");
+            WitDataCreation.CreateIntValue("");
         }
 
         [MenuItem("Assets/Create/Voice SDK/Configuration")]
         public static void CreateWitConfiguration()
         {
-            WitConfigurationEditor.CreateWitConfiguration(WitAuthUtility.ServerToken, null);
+            WitConfigurationUtility.CreateConfiguration(WitAuthUtility.ServerToken);
         }
     }
 }

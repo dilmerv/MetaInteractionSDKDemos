@@ -46,6 +46,7 @@ MonoBehaviour:
   _hand: {fileID: 8646129326984794350}
   _offset: {x: -0.1, y: -0.035, z: 0}
   _rotation: {x: -0.105225, y: 0.6678411, z: -0.01393329, w: -0.7366965}
+  _relativeTransform: {fileID: 0}
 --- !u!1 &1487736799
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,6 +143,7 @@ MonoBehaviour:
   _hand: {fileID: 8646129326984794350}
   _offset: {x: -0.11, y: -0.075, z: -0.02}
   _rotation: {x: -0.105225, y: 0.6678411, z: -0.01393329, w: -0.7366965}
+  _relativeTransform: {fileID: 0}
 --- !u!136 &2876613987327765954
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -167,7 +169,6 @@ GameObject:
   - component: {fileID: 3282029262929392818}
   - component: {fileID: 3282029262929392819}
   - component: {fileID: 7913648305480847261}
-  - component: {fileID: 3282029262929392820}
   - component: {fileID: 5859643058306130014}
   m_Layer: 0
   m_Name: Rigidbody
@@ -220,24 +221,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.05
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3282029262929392820
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3282029262929392829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69d6851a1cd1d114bad969d5ea8ed50a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _hand: {fileID: 8646129326984794350}
-  _gripPoint: {fileID: 3282029262929392818}
-  _maxRecordingDistance: 0.05
-  _recordKeyCode: 32
-  _ghostProvider: {fileID: 11400000, guid: ba24f6f783d84ef4f8ff075364e1283c, type: 2}
-  _record: 
 --- !u!114 &5859643058306130014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,7 +245,6 @@ GameObject:
   - component: {fileID: 3282029263655771826}
   - component: {fileID: 8646129326984794350}
   - component: {fileID: 8553364197529364881}
-  - component: {fileID: 609263627}
   - component: {fileID: 3988025341347685241}
   m_Layer: 0
   m_Name: HandGrabInteractor
@@ -315,6 +297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9067480af55f5874d8f613b16812f968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _activeState: {fileID: 0}
   _interactableFilters: []
   _hand: {fileID: 8646129326984794350}
   _rigidbody: {fileID: 3282029262929392819}
@@ -323,21 +306,6 @@ MonoBehaviour:
   _gripPoint: {fileID: 479229220}
   _pinchPoint: {fileID: 2089408844803092864}
   _velocityCalculator: {fileID: 0}
---- !u!114 &609263627
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3282029263655771837}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba7282e6cbb44d94b9399c80f4c2c7e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interactor: {fileID: 8553364197529364881}
-  _selector: {fileID: 0}
-  _activeState: {fileID: 0}
 --- !u!114 &3988025341347685241
 MonoBehaviour:
   m_ObjectHideFlags: 0

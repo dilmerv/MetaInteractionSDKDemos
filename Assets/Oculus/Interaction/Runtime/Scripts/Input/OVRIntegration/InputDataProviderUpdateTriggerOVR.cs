@@ -12,18 +12,10 @@ permissions and limitations under the License.
 
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Serialization;
 
 namespace Oculus.Interaction.Input
 {
-    // When it is desired for HandDataAsset to drive OVRSkeleton, the DataSources:
-    // Must execute after OVRHands (so that the modifier stack can read the latest IsTracked value)
-    // Must execute before OVRSkeleton (so that the created IOVRSkeletonDataProvider injected into
-    // OVRSkeleton can read from the updated HandDataAsset)
-    //   By deriving from InputDataProviderUpdateTrigger, we ensure that the InputData will be
-    //   invalidated at the right time (at priority -85), so that it is recalculated just-in-time
-    //   in the skeleton data callbacks (at priority -80)
-    [DefaultExecutionOrder(-85)]
+    [DefaultExecutionOrder(-70)]
     public class InputDataProviderUpdateTriggerOVR : MonoBehaviour
     {
         [SerializeField, Interface(typeof(IDataSource))]
@@ -31,11 +23,14 @@ namespace Oculus.Interaction.Input
         private IDataSource DataSource;
 
         [SerializeField]
+        [Tooltip("Force trigger updates every update")]
         private bool _enableUpdate = true;
         [SerializeField]
+        [Tooltip("Force trigger updates every fixed update")]
         private bool _enableFixedUpdate = true;
 
         [SerializeField, Interface(typeof(IOVRCameraRigRef)), Optional]
+        [Tooltip("Provide a Camera Rig to Trigger the updates in sync with the OVR anchors update")]
         private MonoBehaviour _cameraRigRef;
 
         protected bool _started = false;
@@ -65,14 +60,20 @@ namespace Oculus.Interaction.Input
             {
                 if (CameraRigRef != null)
                 {
-                    CameraRigRef.OnAnchorsUpdated += MarkRequiresUpdate;
+                    CameraRigRef.WhenInputDataDirtied += InputDataDirtied;
                 }
             }
         }
 
-        private void MarkRequiresUpdate()
+        protected virtual void OnDisable()
         {
-            DataSource.MarkInputDataRequiresUpdate();
+            if (_started)
+            {
+                if (CameraRigRef != null)
+                {
+                    CameraRigRef.WhenInputDataDirtied -= InputDataDirtied;
+                }
+            }
         }
 
         protected virtual void Update()
@@ -91,16 +92,19 @@ namespace Oculus.Interaction.Input
             }
         }
 
-        protected virtual void OnDisable()
+        private void InputDataDirtied(bool isLateUpdate)
         {
-            if (_started)
+            if(!isLateUpdate)
             {
-                if (CameraRigRef != null)
-                {
-                    CameraRigRef.OnAnchorsUpdated -= MarkRequiresUpdate;
-                }
+                MarkRequiresUpdate();
             }
         }
+
+        private void MarkRequiresUpdate()
+        {
+            DataSource.MarkInputDataRequiresUpdate();
+        }
+
 
         #region Inject
 

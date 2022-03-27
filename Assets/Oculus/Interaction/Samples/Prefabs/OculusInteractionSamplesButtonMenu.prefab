@@ -100,6 +100,7 @@ MonoBehaviour:
   _vectorProperties: []
   _colorProperties: []
   _floatProperties: []
+  _updateEveryFrame: 1
 --- !u!114 &2956604755644281874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -418,7 +419,7 @@ PrefabInstance:
     - target: {fileID: 6198825956437652943, guid: 323cb65d2594c79499a11a99ff0fb347,
         type: 3}
       propertyPath: m_text
-      value: Transformables
+      value: Grabbables
       objectReference: {fileID: 0}
     - target: {fileID: 6198825956437652943, guid: 323cb65d2594c79499a11a99ff0fb347,
         type: 3}

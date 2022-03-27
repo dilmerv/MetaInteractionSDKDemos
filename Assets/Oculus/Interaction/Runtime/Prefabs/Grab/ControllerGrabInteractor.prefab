@@ -265,7 +265,6 @@ GameObject:
   - component: {fileID: 5841275377868706828}
   - component: {fileID: 8610105883944576685}
   - component: {fileID: 8083374275553239747}
-  - component: {fileID: 2947746207510643809}
   - component: {fileID: 6625153947635969398}
   m_Layer: 0
   m_Name: ControllerGrabInteractor
@@ -316,26 +315,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acb743c666c1ab34e928a0b62c2fa862, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interactableFilters: []
-  _targetTransform: {fileID: 6931372971830974944}
-  _rigidbody: {fileID: 3577656904122370513}
-  _grabAnchorTransform: {fileID: 0}
-  _velocityCalculator: {fileID: 0}
---- !u!114 &2947746207510643809
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5841275377868706831}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba7282e6cbb44d94b9399c80f4c2c7e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interactor: {fileID: 8083374275553239747}
-  _selector: {fileID: 2589682475924332496}
   _activeState: {fileID: 0}
+  _interactableFilters: []
+  _selector: {fileID: 2589682475924332496}
+  _rigidbody: {fileID: 3577656904122370513}
+  _grabCenter: {fileID: 6931372971830974944}
+  _grabTarget: {fileID: 0}
+  _velocityCalculator: {fileID: 0}
 --- !u!114 &6625153947635969398
 MonoBehaviour:
   m_ObjectHideFlags: 0

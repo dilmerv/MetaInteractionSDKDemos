@@ -20,10 +20,13 @@ public class OVRTrackedKeyboardSampleControls : MonoBehaviour
     public Text NameValue;
     public Text ConnectedValue;
     public Text StateValue;
+    public Text SelectKeyboardValue;
+    public Text TypeValue;
     public Color GoodStateColor = new Color(0.25f, 1, 0.25f, 1);
     public Color BadStateColor = new Color(1, 0.25f, 0.25f, 1);
     public Toggle TrackingToggle;
     public Toggle ConnectionToggle;
+    public Toggle RemoteKeyboardToggle;
 
     void Start()
     {
@@ -36,6 +39,10 @@ public class OVRTrackedKeyboardSampleControls : MonoBehaviour
         {
             ConnectionToggle.isOn = trackedKeyboard.ConnectionRequired;
         }
+
+        if (RemoteKeyboardToggle.isOn != trackedKeyboard.RemoteKeyboard) {
+            RemoteKeyboardToggle.isOn = trackedKeyboard.RemoteKeyboard;
+        }
     }
 
     void Update()
@@ -43,6 +50,8 @@ public class OVRTrackedKeyboardSampleControls : MonoBehaviour
         NameValue.text = trackedKeyboard.SystemKeyboardInfo.Name;
         ConnectedValue.text = ((bool)((trackedKeyboard.SystemKeyboardInfo.KeyboardFlags & OVRPlugin.TrackedKeyboardFlags.Connected) > 0)).ToString();
         StateValue.text = trackedKeyboard.TrackingState.ToString();
+        SelectKeyboardValue.text = "Select " + trackedKeyboard.KeyboardQueryFlags.ToString() + " Keyboard";
+        TypeValue.text = trackedKeyboard.KeyboardQueryFlags.ToString();
         switch (trackedKeyboard.TrackingState)
         {
             case OVRTrackedKeyboard.TrackedKeyboardState.Uninitialized:
@@ -71,7 +80,14 @@ public class OVRTrackedKeyboardSampleControls : MonoBehaviour
 
     public void LaunchKeyboardSelection()
     {
-        trackedKeyboard.LaunchLocalKeyboardSelectionDialog();
+        if (trackedKeyboard.RemoteKeyboard)
+        {
+            trackedKeyboard.LaunchRemoteKeyboardSelectionDialog();
+        }
+        else
+        {
+            trackedKeyboard.LaunchLocalKeyboardSelectionDialog();
+        }
     }
 
     public void SetTrackingEnabled(bool value)

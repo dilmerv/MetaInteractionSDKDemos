@@ -45,7 +45,7 @@ namespace Oculus.Interaction
                     continue;
                 }
 
-                if (!interactable.IsPotentialCandidateFor(interactor))
+                if (!interactable.CanBeSelectedBy(interactor))
                 {
                     continue;
                 }

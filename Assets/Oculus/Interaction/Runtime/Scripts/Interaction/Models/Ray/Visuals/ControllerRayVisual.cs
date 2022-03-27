@@ -21,6 +21,9 @@ namespace Oculus.Interaction
         private RayInteractor _rayInteractor;
 
         [SerializeField]
+        private Renderer _renderer;
+
+        [SerializeField]
         private MaterialPropertyBlockEditor _materialPropertyBlockEditor;
 
         [SerializeField]
@@ -116,6 +119,7 @@ namespace Oculus.Interaction
         {
             this.BeginStart(ref _started);
             Assert.IsNotNull(_rayInteractor);
+            Assert.IsNotNull(_renderer);
             Assert.IsNotNull(_materialPropertyBlockEditor);
             this.EndStart(ref _started);
         }
@@ -125,6 +129,7 @@ namespace Oculus.Interaction
             if (_started)
             {
                 _rayInteractor.WhenInteractorUpdated += UpdateVisual;
+                _rayInteractor.WhenStateChanged += HandleStateChanged;
             }
         }
 
@@ -133,11 +138,24 @@ namespace Oculus.Interaction
             if (_started)
             {
                 _rayInteractor.WhenInteractorUpdated -= UpdateVisual;
+                _rayInteractor.WhenStateChanged -= HandleStateChanged;
             }
+        }
+
+        private void HandleStateChanged(InteractorStateChangeArgs obj)
+        {
+            UpdateVisual();
         }
 
         private void UpdateVisual()
         {
+            if (_rayInteractor.State == InteractorState.Disabled)
+            {
+                _renderer.enabled = false;
+                return;
+            }
+
+            _renderer.enabled = true;
             transform.SetPositionAndRotation(_rayInteractor.Origin, _rayInteractor.Rotation);
 
             transform.localScale = new Vector3(
@@ -151,15 +169,23 @@ namespace Oculus.Interaction
 
         #region Inject
 
-        public void InjectAllControllerRayVisual(RayInteractor rayInteractor, MaterialPropertyBlockEditor materialPropertyBlockEditor)
+        public void InjectAllControllerRayVisual(RayInteractor rayInteractor,
+            Renderer renderer,
+            MaterialPropertyBlockEditor materialPropertyBlockEditor)
         {
             InjectRayInteractor(rayInteractor);
+            InjectRenderer(renderer);
             InjectMaterialPropertyBlockEditor(materialPropertyBlockEditor);
         }
 
         public void InjectRayInteractor(RayInteractor rayInteractor)
         {
             _rayInteractor = rayInteractor;
+        }
+
+        public void InjectRenderer(Renderer renderer)
+        {
+            _renderer = renderer;
         }
 
         public void InjectMaterialPropertyBlockEditor(

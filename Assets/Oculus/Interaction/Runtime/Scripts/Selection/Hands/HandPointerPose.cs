@@ -13,7 +13,6 @@ permissions and limitations under the License.
 using Oculus.Interaction.Input;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Serialization;
 
 namespace Oculus.Interaction
 {
@@ -46,7 +45,7 @@ namespace Oculus.Interaction
         {
             if (_started)
             {
-                Hand.HandUpdated += HandleHandUpdated;
+                Hand.WhenHandUpdated += HandleHandUpdated;
             }
         }
 
@@ -54,7 +53,7 @@ namespace Oculus.Interaction
         {
             if (_started)
             {
-                Hand.HandUpdated -= HandleHandUpdated;
+                Hand.WhenHandUpdated -= HandleHandUpdated;
             }
         }
 

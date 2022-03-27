@@ -78,6 +78,11 @@ public class OVRProjectConfigEditor : Editor
 		EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 		EditorGUILayout.LabelField("Quest Features", EditorStyles.boldLabel);
 
+		if (EditorUserBuildSettings.activeBuildTarget != UnityEditor.BuildTarget.Android)
+		{
+			EditorGUILayout.LabelField($"Your current platform is \"{EditorUserBuildSettings.activeBuildTarget}\". These settings only apply if your active platform is \"Android\".", EditorStyles.wordWrappedMiniLabel);
+		}
+
 		if (projectConfigTabStrs == null)
 		{
 			projectConfigTabStrs = Enum.GetNames(typeof(eProjectConfigTab));
@@ -88,15 +93,17 @@ public class OVRProjectConfigEditor : Editor
 		selectedTab = (eProjectConfigTab)GUILayout.SelectionGrid((int)selectedTab, projectConfigTabStrs, 3, GUI.skin.button);
 		EditorGUILayout.Space(5);
 		bool hasModified = false;
+
 		switch (selectedTab)
 		{
 			case eProjectConfigTab.General:
 
 				// Show overlay support option
-				EditorGUI.BeginDisabledGroup(true);
-				EditorGUILayout.Toggle(new GUIContent("Focus Aware (Required)",
-					"If checked, the new overlay will be displayed when the user presses the home button. The game will not be paused, but will now receive InputFocusLost and InputFocusAcquired events."), true);
-				EditorGUI.EndDisabledGroup();
+				using (new EditorGUI.DisabledScope(true))
+				{
+					EditorGUILayout.Toggle(new GUIContent("Focus Aware (Required)",
+						"If checked, the new overlay will be displayed when the user presses the home button. The game will not be paused, but will now receive InputFocusLost and InputFocusAcquired events."), true);
+				}
 
 				// Hand Tracking Support
 				OVREditorUtil.SetupEnumField(projectConfig, "Hand Tracking Support", ref projectConfig.handTrackingSupport, ref hasModified);
@@ -174,9 +181,9 @@ public class OVRProjectConfigEditor : Editor
 				// Spatial Anchors Support
 				OVREditorUtil.SetupEnumField(projectConfig, "Spatial Anchors Support", ref projectConfig.spatialAnchorsSupport, ref hasModified);
 
-				break;
-
+			break;
 		}
+		
 		EditorGUILayout.EndVertical();
 
 		// apply any pending changes to project config

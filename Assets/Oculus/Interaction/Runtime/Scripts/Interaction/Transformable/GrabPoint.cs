@@ -10,33 +10,11 @@ ANY KIND, either express or implied. See the License for the specific language g
 permissions and limitations under the License.
 ************************************************************************************/
 
+using System;
 using UnityEngine;
 
-namespace Oculus.Interaction
+namespace Oculus.Interaction.Deprecated
 {
-    public class GrabPoint
-    {
-        public int Id { get; private set; }
-        public Vector3 PreviousGrabPosition { get; private set; }
-        public Quaternion PreviousGrabRotation { get; private set; }
-        public Vector3 GrabPosition { get; private set; }
-        public Quaternion GrabRotation { get; private set; }
-
-        public GrabPoint(int id, Vector3 position, Quaternion rotation)
-        {
-            Id = id;
-            PreviousGrabPosition = position;
-            PreviousGrabRotation = rotation;
-            GrabPosition = position;
-            GrabRotation = rotation;
-        }
-
-        public void UpdateGrab(Vector3 position, Quaternion rotation)
-        {
-            PreviousGrabPosition = GrabPosition;
-            PreviousGrabRotation = GrabRotation;
-            GrabPosition = position;
-            GrabRotation = rotation;
-        }
-    }
+    [Obsolete]
+    public class GrabPoint : MonoBehaviour { }
 }

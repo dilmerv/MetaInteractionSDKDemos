@@ -341,8 +341,9 @@ MonoBehaviour:
   _maxInteractors: -1
   _maxSelectingInteractors: -1
   _proximityField: {fileID: 6553429281188994657}
-  _triggerPlaneTransform: {fileID: 9221139118573929147}
+  _surface: {fileID: 4625356660798671994}
   _maxDistance: 0.01
+  _enterHoverDistance: 0
   _releaseDistance: 0.1
   _horizontalDragThreshold: 0.1
   _verticalDragThreshold: 0.1
@@ -559,6 +560,7 @@ MonoBehaviour:
   _vectorProperties: []
   _colorProperties: []
   _floatProperties: []
+  _updateEveryFrame: 1
 --- !u!114 &2778893221137343601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -719,8 +721,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9221139118573929147}
+  - component: {fileID: 4625356660798671994}
   m_Layer: 0
-  m_Name: TriggerPlane
+  m_Name: Surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -740,6 +743,20 @@ Transform:
   m_Father: {fileID: 5074392215883782687}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4625356660798671994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9221139118573929146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cf2a74d69b1c1e41916d2a7afdff5be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _facing: 0
+  _doubleSided: 1
 --- !u!1001 &6279692076500133922
 PrefabInstance:
   m_ObjectHideFlags: 0

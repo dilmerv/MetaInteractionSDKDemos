@@ -13,6 +13,7 @@ permissions and limitations under the License.
 using UnityEngine;
 using System.Reflection;
 using System;
+using UnityEditor;
 
 namespace Oculus.Interaction
 {
@@ -20,27 +21,42 @@ namespace Oculus.Interaction
     public class InspectorButtonAttribute : PropertyAttribute
     {
         private const float BUTTON_WIDTH = 80;
+        private const float BUTTON_HEIGHT = 20;
 
         public float ButtonWidth { get; set; } = BUTTON_WIDTH;
 
         public readonly string methodName;
+        public readonly float buttonHeight;
 
         public InspectorButtonAttribute(string methodName)
         {
             this.methodName = methodName;
+            this.buttonHeight = BUTTON_HEIGHT;
+        }
+        public InspectorButtonAttribute(string methodName, float buttonHeight)
+        {
+            this.methodName = methodName;
+            this.buttonHeight = buttonHeight;
         }
     }
 
 #if UNITY_EDITOR
-    [UnityEditor.CustomPropertyDrawer(typeof(InspectorButtonAttribute))]
-    public class InspectorButtonPropertyDrawer : UnityEditor.PropertyDrawer
+    [CustomPropertyDrawer(typeof(InspectorButtonAttribute))]
+    public class InspectorButtonPropertyDrawer : PropertyDrawer
     {
         private MethodInfo _method = null;
 
-        public override void OnGUI(Rect positionRect, UnityEditor.SerializedProperty prop, GUIContent label)
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            InspectorButtonAttribute inspectorButtonAttribute = (InspectorButtonAttribute)attribute;
+            return inspectorButtonAttribute.buttonHeight;
+        }
+
+        public override void OnGUI(Rect positionRect, SerializedProperty prop, GUIContent label)
         {
             InspectorButtonAttribute inspectorButtonAttribute = (InspectorButtonAttribute)attribute;
             Rect rect = positionRect;
+            rect.height = inspectorButtonAttribute.buttonHeight;
             if (GUI.Button(rect, label.text))
             {
                 Type eventType = prop.serializedObject.targetObject.GetType();

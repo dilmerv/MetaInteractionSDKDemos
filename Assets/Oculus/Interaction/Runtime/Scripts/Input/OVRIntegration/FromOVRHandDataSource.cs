@@ -10,15 +10,13 @@ ANY KIND, either express or implied. See the License for the specific language g
 permissions and limitations under the License.
 ************************************************************************************/
 
-using System;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Serialization;
 using static OVRSkeleton;
 
 namespace Oculus.Interaction.Input
 {
-    public class FromOVRHandDataSource : DataSource<HandDataAsset, HandDataSourceConfig>
+    public class FromOVRHandDataSource : DataSource<HandDataAsset>
     {
         [Header("OVR Data Source")]
         [SerializeField, Interface(typeof(IOVRCameraRigRef))]
@@ -36,9 +34,9 @@ namespace Oculus.Interaction.Input
         private MonoBehaviour _handSkeletonProvider;
         private IHandSkeletonProvider HandSkeletonProvider;
 
-        [SerializeField, Interface(typeof(IDataSource<HmdDataAsset, HmdDataSourceConfig>))]
+        [SerializeField, Interface(typeof(IDataSource<HmdDataAsset>))]
         private MonoBehaviour _hmdData;
-        private IDataSource<HmdDataAsset, HmdDataSourceConfig> HmdData;
+        private IDataSource<HmdDataAsset> HmdData;
 
         private readonly HandDataAsset _handDataAsset = new HandDataAsset();
         private OVRHand _ovrHand;
@@ -54,16 +52,14 @@ namespace Oculus.Interaction.Input
         public static Quaternion WristFixupRotation { get; } =
             new Quaternion(0.0f, 1.0f, 0.0f, 0.0f);
 
-        // It is important that this creates an object on the fly, as it is possible it is called
-        // from other components Start methods.
-        public override HandDataSourceConfig Config => _config ?? InitConfig();
-
         protected virtual void Awake()
         {
             TrackingToWorldTransformer = _trackingToWorldTransformer as ITrackingToWorldTransformer;
-            HmdData = _hmdData as IDataSource<HmdDataAsset, HmdDataSourceConfig>;
+            HmdData = _hmdData as IDataSource<HmdDataAsset>;
             CameraRigRef = _cameraRigRef as IOVRCameraRigRef;
             HandSkeletonProvider = _handSkeletonProvider as IHandSkeletonProvider;
+
+            UpdateConfig();
         }
 
         protected override void Start()
@@ -83,36 +79,47 @@ namespace Oculus.Interaction.Input
                 _ovrHand = CameraRigRef.RightHand;
                 _ovrController = OVRInput.Controller.RHand;
             }
+
+            UpdateConfig();
         }
 
-        private HandDataSourceConfig InitConfig()
+        private HandDataSourceConfig Config
         {
-            if (_config != null)
+            get
             {
+                if (_config != null)
+                {
+                    return _config;
+                }
+
+                _config = new HandDataSourceConfig()
+                {
+                    Handedness = _handedness
+                };
+
                 return _config;
             }
+        }
 
-            _config = new HandDataSourceConfig()
-            {
-                Handedness = _handedness,
-                TrackingToWorldTransformer = TrackingToWorldTransformer,
-                HandSkeleton = HandSkeletonProvider[_handedness],
-                HmdData = HmdData
-            };
-
-            return _config;
+        private void UpdateConfig()
+        {
+            Config.Handedness = _handedness;
+            Config.TrackingToWorldTransformer = TrackingToWorldTransformer;
+            Config.HandSkeleton = HandSkeletonProvider[_handedness];
+            Config.HmdData = HmdData;
         }
 
         protected override void UpdateData()
         {
+            _handDataAsset.Config = Config;
             _handDataAsset.IsDataValid = true;
             _handDataAsset.IsConnected =
                 (OVRInput.GetConnectedControllers() & _ovrController) > 0;
 
             if (_ovrHand != null)
             {
-                var skeletonProvider = (IOVRSkeletonDataProvider)_ovrHand;
-                var poseData = skeletonProvider.GetSkeletonPoseData();
+                IOVRSkeletonDataProvider skeletonProvider = _ovrHand;
+                SkeletonPoseData poseData = skeletonProvider.GetSkeletonPoseData();
                 if (poseData.IsDataValid && poseData.RootScale <= 0.0f)
                 {
                     if (_lastHandScale <= 0.0f)
@@ -210,7 +217,7 @@ namespace Oculus.Interaction.Input
 
         public void InjectAllFromOVRHandDataSource(UpdateModeFlags updateMode, IDataSource updateAfter,
             Handedness handedness, ITrackingToWorldTransformer trackingToWorldTransformer,
-            IHandSkeletonProvider handSkeletonProvider, IDataSource<HmdDataAsset, HmdDataSourceConfig> hmdData)
+            IHandSkeletonProvider handSkeletonProvider, IDataSource<HmdDataAsset> hmdData)
         {
             base.InjectAllDataSource(updateMode, updateAfter);
             InjectHandedness(handedness);
@@ -236,7 +243,7 @@ namespace Oculus.Interaction.Input
             HandSkeletonProvider = handSkeletonProvider;
         }
 
-        public void InjectHmdData(IDataSource<HmdDataAsset,HmdDataSourceConfig> hmdData)
+        public void InjectHmdData(IDataSource<HmdDataAsset> hmdData)
         {
             _hmdData = hmdData as MonoBehaviour;
             HmdData = hmdData;

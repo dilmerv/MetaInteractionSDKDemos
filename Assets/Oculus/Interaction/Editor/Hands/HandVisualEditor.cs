@@ -20,6 +20,17 @@ namespace Oculus.Interaction.Hands.Editor
     [CustomEditor(typeof(HandVisual))]
     public class HandVisualEditor : UnityEditor.Editor
     {
+        private SerializedProperty _handProperty;
+        private SerializedProperty _rootProperty;
+
+        private IHand Hand => _handProperty.objectReferenceValue as IHand;
+
+        private void OnEnable()
+        {
+            _handProperty = serializedObject.FindProperty("_hand");
+            _rootProperty = serializedObject.FindProperty("_root");
+        }
+
         public override void OnInspectorGUI()
         {
             DrawPropertiesExcluding(serializedObject);
@@ -28,12 +39,12 @@ namespace Oculus.Interaction.Hands.Editor
             HandVisual visual = (HandVisual)target;
             InitializeSkeleton(visual);
 
-            if (visual.Hand == null)
+            if (Hand == null)
             {
                 return;
             }
 
-            if(GUILayout.Button("Auto Map Joints"))
+            if (GUILayout.Button("Auto Map Joints"))
             {
                 AutoMapJoints(visual);
                 EditorUtility.SetDirty(visual);
@@ -100,16 +111,22 @@ namespace Oculus.Interaction.Hands.Editor
 
         private void AutoMapJoints(HandVisual visual)
         {
-            if (visual.Hand == null)
+            if (Hand == null)
             {
                 InitializeSkeleton(visual);
                 return;
             }
 
+            Transform rootTransform = visual.transform;
+            if (_rootProperty.objectReferenceValue != null)
+            {
+                rootTransform = _rootProperty.objectReferenceValue as Transform;
+            }
+
             for (int i = (int)HandJointId.HandStart; i < (int)HandJointId.HandEnd; ++i)
             {
                 string fbxBoneName = FbxBoneNameFromHandJointId(visual, (HandJointId)i);
-                Transform t = visual.transform.FindChildRecursive(fbxBoneName);
+                Transform t = rootTransform.FindChildRecursive(fbxBoneName);
                 visual.Joints[i] = t;
             }
         }
@@ -118,11 +135,11 @@ namespace Oculus.Interaction.Hands.Editor
         {
             if (handJointId >= HandJointId.HandThumbTip && handJointId <= HandJointId.HandPinkyTip)
             {
-                return _fbxHandSidePrefix[(int)visual.Hand.Handedness] + _fbxHandFingerNames[(int)handJointId - (int)HandJointId.HandThumbTip] + "_finger_tip_marker";
+                return _fbxHandSidePrefix[(int)Hand.Handedness] + _fbxHandFingerNames[(int)handJointId - (int)HandJointId.HandThumbTip] + "_finger_tip_marker";
             }
             else
             {
-                return _fbxHandBonePrefix + _fbxHandSidePrefix[(int)visual.Hand.Handedness] + _fbxHandBoneNames[(int)handJointId];
+                return _fbxHandBonePrefix + _fbxHandSidePrefix[(int)Hand.Handedness] + _fbxHandBoneNames[(int)handJointId];
             }
         }
 

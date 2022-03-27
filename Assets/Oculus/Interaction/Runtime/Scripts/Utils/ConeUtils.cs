@@ -31,48 +31,4 @@ namespace Oculus.Interaction
             return dotProduct >= minDotProductThreshold;
         }
     }
-
-    [System.Serializable]
-    public class ConicalFrustrum
-    {
-        [HideInInspector]
-        public Pose pose;
-        [HideInInspector]
-        public float minFactor = 1f;
-
-        [Min(0f)]
-        public float minLength;
-        [Min(0f)]
-        public float maxLength;
-        [Min(0f)]
-        public float radiusStart;
-        [Range(0f,60f)]
-        public float apertureDegrees;
-
-        public bool IsPointInConeFrustrum(Vector3 point)
-        {
-            Vector3 coneOriginToPoint = point - pose.position;
-            Vector3 pointProjection = Vector3.Project(coneOriginToPoint, pose.forward);
-            float pointLength = pointProjection.magnitude;
-
-            if (pointLength < minLength * minFactor
-                || pointLength > maxLength)
-            {
-                return false;
-            }
-
-            float pointRadius = Vector3.Distance(pose.position + pointProjection, point);
-            return pointRadius <= ConeFrustrumRadiusAtLength(pointLength);
-        }
-
-        public float ConeFrustrumRadiusAtLength(float length)
-        {
-            float angleRadius = Mathf.Asin(apertureDegrees * Mathf.Deg2Rad);
-            float radiusEnd = angleRadius * maxLength;
-
-            float lengthRatio = length / maxLength;
-            float radiusAtLength = Mathf.Lerp(radiusStart, radiusEnd, lengthRatio);
-            return radiusAtLength;
-        }
-    }
 }

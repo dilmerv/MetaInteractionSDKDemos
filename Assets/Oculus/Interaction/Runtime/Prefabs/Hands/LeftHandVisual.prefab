@@ -1063,6 +1063,7 @@ MonoBehaviour:
     value: {x: 0.018, y: -0.01, z: 0, w: 1}
   _colorProperties: []
   _floatProperties: []
+  _updateEveryFrame: 1
 --- !u!1 &6536860776982845793
 GameObject:
   m_ObjectHideFlags: 0

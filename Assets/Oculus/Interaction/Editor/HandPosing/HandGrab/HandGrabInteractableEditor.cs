@@ -90,7 +90,13 @@ namespace Oculus.Interaction.HandPosing.Editor
         {
             if (GUILayout.Button("Create Mirrored HandGrabInteractable"))
             {
-                HandGrabInteractable mirrorInteractable = HandGrabInteractable.Create(_interactable.RelativeTo);
+                HandGrabInteractable mirrorInteractable = 
+                    HandGrabInteractable.Create(_interactable.RelativeTo, 
+                        $"{_interactable.gameObject.name}_mirror");
+
+                HandGrabInteractableData data = _interactable.SaveData();
+                data.points = null;
+                mirrorInteractable.LoadData(data);
 
                 foreach (HandGrabPoint point in _interactable.GrabPoints)
                 {

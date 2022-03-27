@@ -22,19 +22,6 @@ public class AnchorHelpers
         }
     }
 
-    // Pose Helper Functions
-    public static OVRPlugin.Posef UnityWorldSpacePoseToTrackingSpacePose(Transform pose)
-    {
-        OVRPose trackingPose = OVRExtensions.ToTrackingSpacePose(pose, MainCamera);
-        return trackingPose.ToPosef();
-    }
-
-    public static OVRPose TrackingSpacePoseToUnityWorldSpacePose(OVRPlugin.Posef pose)
-    {
-        OVRPose worldPose = OVRExtensions.ToWorldSpacePose(pose.ToOVRPose());
-        return worldPose;
-    }
-
     public static OVRPose getTransformUnityWorldFromDevice()
     {
         OVRPose T_UnityWorld_Device = MainCamera.transform.ToOVRPose();

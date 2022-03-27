@@ -10,10 +10,6 @@ ANY KIND, either express or implied. See the License for the specific language g
 permissions and limitations under the License.
 ************************************************************************************/
 
-using System;
-using UnityEngine;
-using UnityEngine.Assertions;
-
 namespace Oculus.Interaction
 {
     /// <summary>
@@ -25,6 +21,8 @@ namespace Oculus.Interaction
         bool IsRootInteractorDriver { get; set; }
 
         bool HasCandidate { get; }
+        IInteractor CandidateInteractor { get; }
+
         bool ShouldSelect { get; }
 
         bool IsHovering { get; }

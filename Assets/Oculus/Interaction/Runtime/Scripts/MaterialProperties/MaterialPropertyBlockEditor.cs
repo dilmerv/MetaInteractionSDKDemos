@@ -12,7 +12,6 @@ permissions and limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 namespace Oculus.Interaction
@@ -53,10 +52,69 @@ namespace Oculus.Interaction
         [SerializeField]
         private List<MaterialPropertyFloat> _floatProperties;
 
-        public List<Renderer> Renderers => _renderers;
-        public List<MaterialPropertyVector> VectorProperties => _vectorProperties;
-        public List<MaterialPropertyColor> ColorProperties => _colorProperties;
-        public List<MaterialPropertyFloat> FloatProperties => _floatProperties;
+        [SerializeField]
+        private bool _updateEveryFrame = true;
+
+        public List<Renderer> Renderers
+        {
+            get
+            {
+                return _renderers;
+            }
+            set
+            {
+                _renderers = value;
+            }
+        }
+
+        public List<MaterialPropertyVector> VectorProperties
+        {
+            get
+            {
+                return _vectorProperties;
+            }
+            set
+            {
+                _vectorProperties = value;
+            }
+        }
+
+        public List<MaterialPropertyColor> ColorProperties
+        {
+            get
+            {
+                return _colorProperties;
+            }
+            set
+            {
+                _colorProperties = value;
+            }
+        }
+
+        public List<MaterialPropertyFloat> FloatProperties
+        {
+            get
+            {
+                return _floatProperties;
+            }
+            set
+            {
+                _floatProperties = value;
+            }
+        }
+
+        public MaterialPropertyBlock MaterialPropertyBlock
+        {
+            get
+            {
+                if (_materialPropertyBlock == null)
+                {
+                    _materialPropertyBlock = new MaterialPropertyBlock();
+                }
+
+                return _materialPropertyBlock;
+            }
+        }
 
         private MaterialPropertyBlock _materialPropertyBlock = null;
 
@@ -74,24 +132,6 @@ namespace Oculus.Interaction
                 }
             }
             UpdateMaterialPropertyBlock();
-        }
-
-        protected virtual void Start()
-        {
-            UpdateMaterialPropertyBlock();
-        }
-
-        public MaterialPropertyBlock MaterialPropertyBlock
-        {
-            get
-            {
-                if (_materialPropertyBlock == null)
-                {
-                    _materialPropertyBlock = new MaterialPropertyBlock();
-                }
-
-                return _materialPropertyBlock;
-            }
         }
 
         public void UpdateMaterialPropertyBlock()
@@ -133,7 +173,10 @@ namespace Oculus.Interaction
 
         protected virtual void Update()
         {
-            UpdateMaterialPropertyBlock();
+            if (_updateEveryFrame)
+            {
+                UpdateMaterialPropertyBlock();
+            }
         }
     }
 }

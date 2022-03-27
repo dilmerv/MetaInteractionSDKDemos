@@ -19,7 +19,7 @@ namespace Oculus.Interaction.GrabAPI
         [SerializeField]
         private HandGrabAPI _handGrabAPI;
 
-        protected virtual void Start()
+        protected virtual void Awake()
         {
             _handGrabAPI.InjectOptionalFingerPinchAPI(new FingerRawPinchAPI());
         }

@@ -152,6 +152,6 @@ namespace Oculus.Interaction.Input
         /// </summary>
         bool GetHandAspect<TComponent>(out TComponent foundComponent) where TComponent : class;
 
-        event Action HandUpdated;
+        event Action WhenHandUpdated;
     }
 }

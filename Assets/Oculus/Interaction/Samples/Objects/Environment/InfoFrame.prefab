@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 887046460491608366}
   - component: {fileID: 3282439571626947817}
   - component: {fileID: 4637090283671048175}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Primary Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 1920279308707977431}
   - component: {fileID: 7407885840537218353}
   - component: {fileID: 8560839017174208340}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Secondary Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -402,6 +402,7 @@ MonoBehaviour:
   _vectorProperties: []
   _colorProperties: []
   _floatProperties: []
+  _updateEveryFrame: 1
 --- !u!114 &5036699396446031751
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -441,7 +442,7 @@ GameObject:
   - component: {fileID: 2629823523285359456}
   - component: {fileID: 6299850682184054687}
   - component: {fileID: 1778252176125211840}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: InfoCard Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -10,6 +10,7 @@ ANY KIND, either express or implied. See the License for the specific language g
 permissions and limitations under the License.
 ************************************************************************************/
 
+using Oculus.Interaction.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -20,15 +21,12 @@ namespace Oculus.Interaction.HandPosing.SnapSurfaces.Editor
     [CanEditMultipleObjects]
     public class SphereEditor : UnityEditor.Editor
     {
-        private static readonly Color NONINTERACTABLE_COLOR = new Color(0f, 1f, 1f, 0.1f);
-        private static readonly Color INTERACTABLE_COLOR = new Color(0f, 1f, 1f, 0.5f);
-
         private SphereBoundsHandle _sphereHandle = new SphereBoundsHandle();
         private SphereSurface _surface;
 
         private void OnEnable()
         {
-            _sphereHandle.SetColor(INTERACTABLE_COLOR);
+            _sphereHandle.SetColor(EditorConstants.PRIMARY_COLOR);
             _sphereHandle.midpointHandleDrawFunction = null;
 
             _surface = (target as SphereSurface);
@@ -60,7 +58,7 @@ namespace Oculus.Interaction.HandPosing.SnapSurfaces.Editor
 
         private void DrawSurfaceVolume(SphereSurface surface)
         {
-            Handles.color = INTERACTABLE_COLOR;
+            Handles.color = EditorConstants.PRIMARY_COLOR;
             Vector3 startLine = surface.Centre;
             Vector3 endLine = startLine + surface.Rotation * Vector3.forward * surface.Radius;
             Handles.DrawDottedLine(startLine, endLine, 5);

@@ -77,10 +77,14 @@ namespace Oculus.Interaction.Throw
             public void BufferNewValue(Pose newPose, float delta)
             {
                 Vector3 newPosition = newPose.position;
-                Vector3 newVelocity = _previousPosition.HasValue ?
-                    ((newPosition - _previousPosition.Value) / delta) : Vector3.zero;
+                Vector3 newVelocity = Vector3.zero;
+                if (delta > Mathf.Epsilon && _previousPosition.HasValue)
+                {
+                    newVelocity = (newPosition - _previousPosition.Value)
+                        / delta;
+                }
                 int nextWritePos = (_lastWritePos < 0) ? 0 :
-                (_lastWritePos + 1) % _bufferLength;
+                    (_lastWritePos + 1) % _bufferLength;
                 if (Velocities.Count <= nextWritePos)
                 {
                     Velocities.Add(newVelocity);
@@ -96,12 +100,17 @@ namespace Oculus.Interaction.Throw
 
             public Vector3 GetAverageVelocityVector()
             {
+                int numVelocities = Velocities.Count;
+                if (numVelocities == 0)
+                {
+                    return Vector3.zero;
+                }
                 Vector3 average = Vector3.zero;
                 foreach (var speed in Velocities)
                 {
                     average += speed;
                 }
-                average /= Velocities.Count;
+                average /= numVelocities;
                 return average;
             }
 
@@ -184,22 +193,22 @@ namespace Oculus.Interaction.Throw
 
             _jointPoseInfoArray = new[]
             {
-            new HandJointPoseMetaData(HandFinger.Thumb,
-                HandJointId.HandThumb3,
-                _bufferSize),
-            new HandJointPoseMetaData(HandFinger.Index,
-                HandJointId.HandIndex3,
-                _bufferSize),
-            new HandJointPoseMetaData(HandFinger.Middle,
-                HandJointId.HandMiddle3,
-                _bufferSize),
-            new HandJointPoseMetaData(HandFinger.Ring,
-                HandJointId.HandRing3,
-                _bufferSize),
-            new HandJointPoseMetaData(HandFinger.Pinky,
-                HandJointId.HandPinky3,
-                _bufferSize)
-        };
+                new HandJointPoseMetaData(HandFinger.Thumb,
+                    HandJointId.HandThumb3,
+                    _bufferSize),
+                new HandJointPoseMetaData(HandFinger.Index,
+                    HandJointId.HandIndex3,
+                    _bufferSize),
+                new HandJointPoseMetaData(HandFinger.Middle,
+                    HandJointId.HandMiddle3,
+                    _bufferSize),
+                new HandJointPoseMetaData(HandFinger.Ring,
+                    HandJointId.HandRing3,
+                    _bufferSize),
+                new HandJointPoseMetaData(HandFinger.Pinky,
+                    HandJointId.HandPinky3,
+                    _bufferSize)
+            };
         }
 
         private bool GetFingerIsHighConfidence(HandFinger handFinger)
@@ -246,7 +255,8 @@ namespace Oculus.Interaction.Throw
 
         public (Vector3, Vector3) GetExternalVelocities()
         {
-            if (_jointPoseInfoArray == null)
+            if (_jointPoseInfoArray == null ||
+                _jointPoseInfoArray.Length == 0)
             {
                 return (Vector3.zero, Vector3.zero);
             }

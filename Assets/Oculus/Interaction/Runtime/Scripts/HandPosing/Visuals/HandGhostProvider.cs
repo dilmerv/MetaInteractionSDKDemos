@@ -43,5 +43,17 @@ namespace Oculus.Interaction.HandPosing.Visuals
         {
             return handedness == Handedness.Left ? _leftHand : _rightHand;
         }
+
+        public static bool TryGetDefault(out HandGhostProvider provider)
+        {
+            HandGhostProvider[] providers = Resources.FindObjectsOfTypeAll<HandGhostProvider>();
+            if (providers != null && providers.Length > 0)
+            {
+                provider = providers[0];
+                return true;
+            }
+            provider = null;
+            return false;
+        }
     }
 }

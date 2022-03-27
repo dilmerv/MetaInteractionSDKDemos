@@ -10,40 +10,11 @@ ANY KIND, either express or implied. See the License for the specific language g
 permissions and limitations under the License.
 ************************************************************************************/
 
-namespace Oculus.Interaction.Input
-{
-    public class LastKnownGoodDataModifier : Hand
-    {
-        private readonly HandDataAsset _lastState = new HandDataAsset();
+using System;
+using UnityEngine;
 
-        #region DataModifier Implementation
-        protected override void Apply(HandDataAsset data)
-        {
-            bool shouldUseData = data.IsHighConfidence ||
-                                 data.RootPoseOrigin == PoseOrigin.FilteredTrackedPose ||
-                                 data.RootPoseOrigin == PoseOrigin.SyntheticPose;
-            if (data.IsDataValid && data.IsTracked && shouldUseData)
-            {
-                _lastState.CopyFrom(data);
-            }
-            else if (_lastState.IsDataValid && data.IsConnected)
-            {
-                // No high confidence data, use last known good.
-                // Only copy pose data, not confidence/tracked flags.
-                data.CopyPosesFrom(_lastState);
-                data.RootPoseOrigin = PoseOrigin.SyntheticPose;
-                data.IsDataValid = true;
-                data.IsTracked = true;
-                data.IsHighConfidence = true;
-            }
-            else
-            {
-                // This hand is not connected, or has never seen valid data.
-                data.IsTracked = false;
-                data.IsHighConfidence = false;
-                data.RootPoseOrigin = PoseOrigin.None;
-            }
-        }
-        #endregion
-    }
+namespace Oculus.Interaction.Deprecated
+{
+    [Obsolete("Replaced by LastKnownGoodHand")]
+    public class LastKnownGoodDataModifier : MonoBehaviour { }
 }

@@ -12,13 +12,11 @@ permissions and limitations under the License.
 
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Serialization;
 
 namespace Oculus.Interaction
 {
     /// <summary>
     /// InteractorDriver provides a means to drive the update loop of an Interactor.
-    /// Optionally can be provided a Selector to drive selection of the Interactor.
     /// Optionally can be provided an ActiveState to enable or disable the Interactor.
     /// </summary>
     public class InteractorDriver : MonoBehaviour, IInteractorDriver
@@ -27,10 +25,6 @@ namespace Oculus.Interaction
         private MonoBehaviour _interactor;
 
         public IInteractor Interactor;
-
-        [SerializeField, Interface(typeof(ISelector)), Optional]
-        private MonoBehaviour _selector;
-        private ISelector Selector = null;
 
         [SerializeField, Interface(typeof(IActiveState)), Optional]
         private MonoBehaviour _activeState;
@@ -43,18 +37,14 @@ namespace Oculus.Interaction
         public bool IsHovering => Interactor.State == InteractorState.Hover;
         public bool IsSelecting => Interactor.State == InteractorState.Select;
         public bool HasCandidate => Interactor.HasCandidate;
-        public bool ShouldSelect => _performSelect || Interactor.ShouldSelect;
-
-        private bool _performSelect = false;
-        private bool _performUnselect = false;
-        private bool _selected = false;
+        public IInteractor CandidateInteractor => HasCandidate ? Interactor : null;
+        public bool ShouldSelect => Interactor.ShouldSelect;
 
         protected bool _started = false;
 
         protected virtual void Awake()
         {
             Interactor = _interactor as IInteractor;
-            Selector = _selector as ISelector;
             ActiveState = _activeState as IActiveState;
         }
 
@@ -63,11 +53,6 @@ namespace Oculus.Interaction
             this.BeginStart(ref _started);
             Assert.IsNotNull(Interactor);
 
-            if (_selector != null)
-            {
-                Assert.IsNotNull(Selector);
-            }
-
             if (_activeState != null)
             {
                 Assert.IsNotNull(ActiveState);
@@ -75,35 +60,11 @@ namespace Oculus.Interaction
             this.EndStart(ref _started);
         }
 
-        protected virtual void OnEnable()
-        {
-            if (_started)
-            {
-                if (Selector != null)
-                {
-                    Selector.WhenSelected += HandleSelected;
-                    Selector.WhenUnselected += HandleUnselected;
-                }
-            }
-        }
-
         protected virtual void OnDisable()
         {
             if (_started)
             {
-                if (Selector != null)
-                {
-                    Selector.WhenSelected -= HandleSelected;
-                    Selector.WhenUnselected -= HandleUnselected;
-
-                    _performSelect = _performUnselect = false;
-
-                    if (_selected)
-                    {
-                        _selected = false;
-                        Interactor.Unselect();
-                    }
-                }
+                Interactor.Unselect();
             }
         }
 
@@ -121,7 +82,6 @@ namespace Oculus.Interaction
             {
                 return true;
             }
-            _performSelect = _performUnselect = false;
             Interactor.Disable();
             return false;
         }
@@ -154,34 +114,18 @@ namespace Oculus.Interaction
             }
             Interactor.Enable();
 
-            _performSelect |= Interactor.ShouldSelect;
-            if (_performSelect)
+            if (Interactor.ShouldSelect)
             {
-                _selected = true;
                 if (selectionCanBeEmpty || Interactor.HasInteractable)
                 {
                     Interactor.Select();
                 }
             }
 
-            _performUnselect |= Interactor.ShouldUnselect;
-            if (_performUnselect)
+            if(Interactor.ShouldUnselect)
             {
-                _selected = false;
                 Interactor.Unselect();
             }
-
-            _performSelect = _performUnselect = false;
-        }
-
-        public void HandleSelected()
-        {
-            _performSelect = true;
-        }
-
-        public void HandleUnselected()
-        {
-            _performUnselect = true;
         }
 
         public void Enable()
@@ -192,7 +136,6 @@ namespace Oculus.Interaction
 
         public void Disable()
         {
-            _performSelect = _performUnselect = false;
             Interactor.Disable();
         }
 
@@ -207,12 +150,6 @@ namespace Oculus.Interaction
         {
             _interactor = interactor as MonoBehaviour;
             Interactor = interactor;
-        }
-
-        public void InjectOptionalSelector(ISelector selector)
-        {
-            _selector = selector as MonoBehaviour;
-            Selector = selector;
         }
 
         public void InjectOptionalActiveState(IActiveState activeState)

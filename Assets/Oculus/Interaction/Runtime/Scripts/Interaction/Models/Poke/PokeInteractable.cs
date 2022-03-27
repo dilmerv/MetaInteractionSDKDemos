@@ -13,7 +13,7 @@ permissions and limitations under the License.
 using System;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Serialization;
+using Oculus.Interaction.Surfaces;
 
 namespace Oculus.Interaction
 {
@@ -23,18 +23,22 @@ namespace Oculus.Interaction
         private MonoBehaviour _proximityField;
         public IProximityField ProximityField;
 
-        [SerializeField]
-        // The plane "forward" direction should be towards negative Z (to maintain parity with Canvas)
-        private Transform _triggerPlaneTransform;
-        public Transform TriggerPlaneTransform => _triggerPlaneTransform;
+        [SerializeField, Interface(typeof(IPointableSurface))]
+        private MonoBehaviour _surface;
+        public IPointableSurface Surface;
 
         [SerializeField]
         private float _maxDistance = 0.1f;
         public float MaxDistance => _maxDistance;
 
         [SerializeField]
+        private float _enterHoverDistance = 0f;
+
+        [SerializeField]
         private float _releaseDistance = 0.25f;
         public float ReleaseDistance => _releaseDistance;
+
+        public float EnterHoverDistance => _enterHoverDistance;
 
         [SerializeField]
         private float _horizontalDragThreshold = 0.0f;
@@ -56,14 +60,18 @@ namespace Oculus.Interaction
         protected virtual void Awake()
         {
             ProximityField = _proximityField as IProximityField;
+            Surface = _surface as IPointableSurface;
         }
 
         protected virtual void Start()
         {
             this.BeginStart(ref _started);
-            Assert.IsNotNull(_triggerPlaneTransform);
             Assert.IsNotNull(ProximityField);
-
+            Assert.IsNotNull(Surface);
+            if (_enterHoverDistance > 0f)
+            {
+                _enterHoverDistance = Mathf.Min(_enterHoverDistance, _maxDistance);
+            }
             _pointableDelegate = new PointableDelegate<PokeInteractor>(this, ComputePointer);
             this.EndStart(ref _started);
         }
@@ -92,10 +100,22 @@ namespace Oculus.Interaction
             return ProximityField.ComputeClosestPoint(point);
         }
 
+        public Vector3 ClosestSurfacePoint(Vector3 point)
+        {
+            Surface.ClosestSurfacePoint(point, out SurfaceHit hit);
+            return hit.Point;
+        }
+
+        public Vector3 ClosestSurfaceNormal(Vector3 point)
+        {
+            Surface.ClosestSurfacePoint(point, out SurfaceHit hit);
+            return hit.Normal;
+        }
+
         private void ComputePointer(PokeInteractor pokeInteractor, out Vector3 position, out Quaternion rotation)
         {
             position = pokeInteractor.TouchPoint;
-            rotation = _triggerPlaneTransform.rotation;
+            rotation = Quaternion.LookRotation(ClosestSurfaceNormal(position));
         }
 
         private void InvokePointerEvent(PointerArgs args)
@@ -110,16 +130,17 @@ namespace Oculus.Interaction
 
         #region Inject
 
-        public void InjectAllPokeInteractable(Transform triggerPlaneTransform,
+        public void InjectAllPokeInteractable(IPointableSurface surface,
                                               IProximityField proximityField)
         {
-            InjectTriggerPlaneTransform(triggerPlaneTransform);
+            InjectSurface(surface);
             InjectProximityField(proximityField);
         }
 
-        public void InjectTriggerPlaneTransform(Transform triggerPlaneTransform)
+        public void InjectSurface(IPointableSurface surface)
         {
-            _triggerPlaneTransform = triggerPlaneTransform;
+            _surface = surface as MonoBehaviour;
+            Surface = surface;
         }
 
         public void InjectProximityField(IProximityField proximityField)
@@ -138,14 +159,19 @@ namespace Oculus.Interaction
             _releaseDistance = releaseDistance;
         }
 
-        public void InjectHorizontalDragThreshold(float horizontalDragThreshold)
+        public void InjectOptionalHorizontalDragThreshold(float horizontalDragThreshold)
         {
             _horizontalDragThreshold = horizontalDragThreshold;
         }
 
-        public void InjectVerticalDragThreshold(float verticalDragThreshold)
+        public void InjectOptionalVerticalDragThreshold(float verticalDragThreshold)
         {
             _verticalDragThreshold = verticalDragThreshold;
+        }
+
+        public void InjectOptionalEnterHoverDistance(float enterHoverDistance)
+        {
+            _enterHoverDistance = enterHoverDistance;
         }
 
         public void InjectOptionalVolumeMask(Collider volumeMask)

@@ -64,6 +64,14 @@ namespace Oculus.Interaction.Input
             return Value;
         }
 
+        public void Reset()
+        {
+            Value = default;
+            _xfilt.Reset();
+            _dxfilt.Reset();
+            _isFirstUpdate = true;
+        }
+
         private float GetAlpha(float rate, float cutoff)
         {
             float tau = 1f / (2.0f * Mathf.PI * cutoff);
@@ -82,6 +90,12 @@ namespace Oculus.Interaction.Input
             public LowPassFilter()
             {
                 _isFirstUpdate = true;
+            }
+
+            public void Reset()
+            {
+                _isFirstUpdate = true;
+                _hatx = _hatxprev = default;
             }
 
             public float Filter(float x, float alpha)

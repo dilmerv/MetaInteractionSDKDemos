@@ -27,8 +27,10 @@ namespace Facebook.WitAi
         /// <returns></returns>
         public static WitRequest MessageRequest(this WitConfiguration config, string query, WitRequestOptions requestOptions)
         {
-            List<WitRequest.QueryParam> queryParams = new List<WitRequest.QueryParam>();
-            queryParams.Add(QueryParam("q", query));
+            List<WitRequest.QueryParam> queryParams = new List<WitRequest.QueryParam>
+            {
+                QueryParam("q", query)
+            };
 
             if (null != requestOptions && -1 != requestOptions.nBestIntents)
             {
@@ -38,6 +40,11 @@ namespace Facebook.WitAi
             if (null != requestOptions?.dynamicEntities)
             {
                 queryParams.Add(QueryParam("entities", requestOptions.dynamicEntities.ToJSON()));
+            }
+
+            if (null != requestOptions && !string.IsNullOrEmpty(requestOptions.tag))
+            {
+                queryParams.Add(QueryParam("tag", requestOptions.tag));
             }
 
             var path = WitEndpointConfig.GetEndpointConfig(config).Message;
@@ -61,6 +68,11 @@ namespace Facebook.WitAi
             if (null != requestOptions?.dynamicEntities)
             {
                 queryParams.Add(QueryParam("entities", requestOptions.dynamicEntities.ToJSON()));
+            }
+
+            if (null != requestOptions && !string.IsNullOrEmpty(requestOptions.tag))
+            {
+                queryParams.Add(QueryParam("tag", requestOptions.tag));
             }
 
             var path = WitEndpointConfig.GetEndpointConfig(config).Speech;

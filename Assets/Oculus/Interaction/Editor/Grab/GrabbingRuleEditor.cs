@@ -10,6 +10,7 @@ ANY KIND, either express or implied. See the License for the specific language g
 permissions and limitations under the License.
 ************************************************************************************/
 
+using Oculus.Interaction.Editor;
 using Oculus.Interaction.Input;
 using System;
 using System.Collections.Generic;
@@ -32,18 +33,16 @@ namespace Oculus.Interaction.GrabAPI
             "_pinkyRequirement",
         };
 
-        private const float ROW_HEIGHT = 20f;
-
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             InitializeUnfold(property);
             if (_unfolds[property.propertyPath])
             {
-                return ROW_HEIGHT * (Constants.NUM_FINGERS + 2);
+                return EditorConstants.ROW_HEIGHT * (Constants.NUM_FINGERS + 2);
             }
             else
             {
-                return ROW_HEIGHT * 1;
+                return EditorConstants.ROW_HEIGHT * 1;
             }
         }
 
@@ -52,7 +51,7 @@ namespace Oculus.Interaction.GrabAPI
             EditorGUI.BeginProperty(position, label, property);
 
             InitializeUnfold(property);
-            Rect rowRect = new Rect(position.x, position.y, position.width, ROW_HEIGHT);
+            Rect rowRect = new Rect(position.x, position.y, position.width, EditorConstants.ROW_HEIGHT);
             _unfolds[property.propertyPath] = EditorGUI.Foldout(rowRect, _unfolds[property.propertyPath], label, true);
 
             if (_unfolds[property.propertyPath])
@@ -60,7 +59,7 @@ namespace Oculus.Interaction.GrabAPI
                 EditorGUI.indentLevel++;
                 for (int i = 0; i < Constants.NUM_FINGERS; i++)
                 {
-                    rowRect.y += ROW_HEIGHT;
+                    rowRect.y += EditorConstants.ROW_HEIGHT;
                     SerializedProperty finger = property.FindPropertyRelative(FINGER_PROPERTY_NAMES[i]);
                     HandFinger fingerID = (HandFinger)i;
                     FingerRequirement current = (FingerRequirement)finger.intValue;
@@ -68,7 +67,7 @@ namespace Oculus.Interaction.GrabAPI
                     finger.intValue = (int)selected;
                 }
 
-                rowRect.y += ROW_HEIGHT;
+                rowRect.y += EditorConstants.ROW_HEIGHT;
                 DrawFlagProperty<FingerUnselectMode>(property, rowRect, "Unselect Mode", "_unselectMode", false);
                 EditorGUI.indentLevel--;
             }

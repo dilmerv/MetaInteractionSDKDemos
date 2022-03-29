@@ -49,7 +49,7 @@ namespace Oculus.Interaction.HandPosing
     {
         bool IsSnapping { get; }
         float SnapStrength { get; }
-        Pose WristToGripOffset { get; }
+        Pose WristToSnapOffset { get; }
         HandFingerFlags SnappingFingers();
         ISnapData SnapData { get; }
         System.Action<ISnapper> WhenSnapStarted { get; set; }
@@ -66,7 +66,6 @@ namespace Oculus.Interaction.HandPosing
         SnapType SnapType { get; }
 
         Collider[] Colliders { get; }
-        float ReleaseDistance { get; }
 
         bool UsesHandPose();
     }

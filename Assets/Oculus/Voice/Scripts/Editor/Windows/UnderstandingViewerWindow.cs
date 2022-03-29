@@ -10,49 +10,15 @@
  * permissions and limitations under the License.
  **************************************************************************************************/
 
-using Facebook.WitAi;
-using Facebook.WitAi.Utilities;
-using UnityEditor;
+using Facebook.WitAi.Windows;
 using UnityEngine;
+using Oculus.Voice.Utility;
 
 namespace Oculus.Voice.Windows
 {
     public class UnderstandingViewerWindow : WitUnderstandingViewer
     {
-        [MenuItem("Oculus/Voice SDK/Understanding Viewer", false, 100)]
-        static void Init()
-        {
-            if (witConfigs.Length == 0)
-            {
-                RefreshConfigList();
-            }
-            if (witConfigs.Length > 0)
-            {
-                UnderstandingViewerWindow window = GetWindow(typeof(UnderstandingViewerWindow)) as
-                    UnderstandingViewerWindow;
-                window.titleContent = new GUIContent("Understanding Viewer");
-                window.autoRepaintOnSceneChange = true;
-                window.Show();
-            }
-            else
-            {
-                var wizard = ScriptableWizard.DisplayWizard<WelcomeWizard>("Welcome to Voice SDK", "Link");
-                wizard.successAction = Init;
-            }
-        }
-
-        protected override string HeaderLink
-        {
-            get
-            {
-                if (null != witConfiguration && null != witConfiguration.application &&
-                    !string.IsNullOrEmpty(witConfiguration.application.id))
-                {
-                    return $"https://wit.ai/apps/{witConfiguration.application.id}/understanding";
-                }
-
-                return null;
-            }
-        }
+        protected override GUIContent Title => VoiceSDKStyles.UnderstandingTitle;
+        protected override Texture2D HeaderIcon => VoiceSDKStyles.MainHeader;
     }
 }

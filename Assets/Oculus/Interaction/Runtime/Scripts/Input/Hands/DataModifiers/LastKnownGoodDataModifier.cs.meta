@@ -1,9 +1,10 @@
 fileFormatVersion: 2
-guid: 7daff26e66096cd49a253ca3ab592c03
+guid: fc9329e2d2228b242a4c716e99b1b22a
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences: []
+  labels: ["oculus_interaction_deprecated"]
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

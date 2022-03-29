@@ -10,6 +10,7 @@ ANY KIND, either express or implied. See the License for the specific language g
 permissions and limitations under the License.
 ************************************************************************************/
 
+using Oculus.Interaction.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -20,8 +21,6 @@ namespace Oculus.Interaction.HandPosing.SnapSurfaces.Editor
     [CanEditMultipleObjects]
     public class CylinderEditor : UnityEditor.Editor
     {
-        private static readonly Color NONINTERACTABLE_COLOR = new Color(0f, 1f, 1f, 0.1f);
-        private static readonly Color INTERACTABLE_COLOR = new Color(0f, 1f, 1f, 0.5f);
         private const float DRAW_SURFACE_ANGULAR_RESOLUTION = 5f;
 
         private ArcHandle _arcHandle = new ArcHandle();
@@ -31,7 +30,7 @@ namespace Oculus.Interaction.HandPosing.SnapSurfaces.Editor
 
         private void OnEnable()
         {
-            _arcHandle.SetColorWithRadiusHandle(INTERACTABLE_COLOR, 0f);
+            _arcHandle.SetColorWithRadiusHandle(EditorConstants.PRIMARY_COLOR, 0f);
             _surface = (target as CylinderSurface);
         }
 
@@ -72,7 +71,7 @@ namespace Oculus.Interaction.HandPosing.SnapSurfaces.Editor
             Vector3 end = surface.EndPoint;
             float radius = surface.Radius;
 
-            Handles.color = INTERACTABLE_COLOR;
+            Handles.color = EditorConstants.PRIMARY_COLOR;
             Handles.DrawWireArc(end,
                 surface.Direction,
                 surface.StartAngleDir,
@@ -92,7 +91,7 @@ namespace Oculus.Interaction.HandPosing.SnapSurfaces.Editor
                 _surfaceEdges = new Vector3[edgePoints];
             }
 
-            Handles.color = NONINTERACTABLE_COLOR;
+            Handles.color = EditorConstants.PRIMARY_COLOR_DISABLED;
             int i = 0;
             for (float angle = 0f; angle < surface.Angle; angle += DRAW_SURFACE_ANGULAR_RESOLUTION)
             {

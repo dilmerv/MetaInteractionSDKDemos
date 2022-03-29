@@ -13,7 +13,6 @@ permissions and limitations under the License.
 using Oculus.Interaction.HandPosing.SnapSurfaces;
 using Oculus.Interaction.Input;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Assertions;
 
 namespace Oculus.Interaction.HandPosing
@@ -106,7 +105,7 @@ namespace Oculus.Interaction.HandPosing
             this.transform.SetPose(_relativeTo.GlobalPose(data.gripPose));
             if (data.handPose != null)
             {
-                _handPose.CopyFrom(data.handPose);
+                _handPose = new HandPose(data.handPose);
             }
         }
 
@@ -182,15 +181,6 @@ namespace Oculus.Interaction.HandPosing
         {
             InjectRelativeTo(relativeTo);
         }
-        #endregion
-
-        #region editor
-
-        protected virtual void OnDrawGizmos()
-        {
-            Gizmos.DrawIcon(this.transform.position, "sv_icon_dot2_sml");
-        }
-
         #endregion
 
     }

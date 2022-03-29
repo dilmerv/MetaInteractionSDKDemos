@@ -52,8 +52,10 @@ MonoBehaviour:
   _maxSelectingInteractors: -1
   _relativeTo: {fileID: 6035498533402622012}
   _rigidbody: {fileID: 675784305044643026}
+  _grabbable: {fileID: 0}
   _releaseDistance: 0
-  _physicsObject: {fileID: 0}
+  _resetGrabOnGrabsUpdated: 1
+  _physicsGrabbable: {fileID: 0}
   _scoringModifier:
     _maxDistance: 0.1
     _positionRotationWeight: 0.5
@@ -74,6 +76,31 @@ MonoBehaviour:
     _unselectMode: 0
   _snapType: 0
   _travelSpeed: 1
+  _useFixedTravelTime: 0
+  _travelCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _handGrabPoints:
   - {fileID: 180223812}
   - {fileID: 2096017343}
@@ -144,7 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81bef07654562f541951b59629ceeeb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transformable: {fileID: 7780865689132456738}
+  _grabbable: {fileID: 7780865689132456738}
   _pointableInteractable: {fileID: 180223813}
 --- !u!1 &186871198
 GameObject:
@@ -370,8 +397,10 @@ MonoBehaviour:
   _maxSelectingInteractors: -1
   _relativeTo: {fileID: 6035498533402622012}
   _rigidbody: {fileID: 675784305044643026}
+  _grabbable: {fileID: 0}
   _releaseDistance: 0
-  _physicsObject: {fileID: 0}
+  _resetGrabOnGrabsUpdated: 1
+  _physicsGrabbable: {fileID: 0}
   _scoringModifier:
     _maxDistance: 0.1
     _positionRotationWeight: 0.5
@@ -392,6 +421,31 @@ MonoBehaviour:
     _unselectMode: 0
   _snapType: 0
   _travelSpeed: 1
+  _useFixedTravelTime: 0
+  _travelCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _handGrabPoints:
   - {fileID: 1272538756}
   - {fileID: 186871201}
@@ -462,7 +516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81bef07654562f541951b59629ceeeb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transformable: {fileID: 7780865689132456738}
+  _grabbable: {fileID: 7780865689132456738}
   _pointableInteractable: {fileID: 1272538755}
 --- !u!1 &1686012438
 GameObject:
@@ -15324,7 +15378,6 @@ GameObject:
   - component: {fileID: 7780865689132456738}
   - component: {fileID: 8526569588569580745}
   - component: {fileID: 5253133084518689128}
-  - component: {fileID: 241228471}
   m_Layer: 0
   m_Name: Torch
   m_TagString: Untagged
@@ -15378,11 +15431,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43f86b14a27b52f4f9298c33015b5c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transferHandOnSecondGrab: 1
-  _maxGrabPoints: -1
   _oneGrabTransformer: {fileID: 0}
   _twoGrabTransformer: {fileID: 0}
-  _pointables: []
+  _transferHandOnSecondGrab: 1
+  _addNewGrabsToFront: 0
+  _maxGrabPoints: -1
 --- !u!114 &8526569588569580745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15450,7 +15503,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f5531e0e19dff046a5b9f58ee68fe2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transformable: {fileID: 7780865689132456738}
+  _grabbable: {fileID: 7780865689132456738}
   _onAdd:
     m_PersistentCalls:
       m_Calls: []
@@ -15475,26 +15528,6 @@ MonoBehaviour:
   _onUpdate:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &241228471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6379829757502743174}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b387ba6b69a57bb4aad95e412cd74019, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interactables:
-  - {fileID: 1272538755}
-  - {fileID: 180223813}
-  _clearInteractables: 
-  _refreshInteractables: 
-  _posesCollection: {fileID: 0}
-  _storePoses: 
-  _loadPoses: 
 --- !u!1 &6423383598001411974
 GameObject:
   m_ObjectHideFlags: 0
@@ -15642,6 +15675,7 @@ MonoBehaviour:
   _vectorProperties: []
   _colorProperties: []
   _floatProperties: []
+  _updateEveryFrame: 1
 --- !u!114 &299091019
 MonoBehaviour:
   m_ObjectHideFlags: 0

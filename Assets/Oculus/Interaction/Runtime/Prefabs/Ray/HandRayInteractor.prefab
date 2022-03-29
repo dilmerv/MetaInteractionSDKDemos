@@ -46,7 +46,6 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -139,7 +138,6 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -164,7 +162,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!210 &4041958140742381682
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -440,7 +437,6 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -473,7 +469,7 @@ SpriteRenderer:
   m_Size: {x: 0.64, y: 0.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &8030197382645210609
@@ -487,7 +483,6 @@ GameObject:
   - component: {fileID: 8030197382645210610}
   - component: {fileID: 3392710849946547363}
   - component: {fileID: 4464419641693729567}
-  - component: {fileID: 6454134197847342584}
   - component: {fileID: 7678215530584608298}
   - component: {fileID: 9185549227552038016}
   - component: {fileID: 5692448621163546947}
@@ -540,24 +535,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4733c5f009d26ad49b3685117b8d3eb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _activeState: {fileID: 7678215530584608298}
   _interactableFilters: []
+  _selector: {fileID: 2812571986424194775}
   _rayOrigin: {fileID: 8030197382972942298}
   _maxRayLength: 5
---- !u!114 &6454134197847342584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8030197382645210609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba7282e6cbb44d94b9399c80f4c2c7e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interactor: {fileID: 4464419641693729567}
-  _selector: {fileID: 2812571986424194775}
-  _activeState: {fileID: 7678215530584608298}
 --- !u!114 &7678215530584608298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -605,7 +587,6 @@ MonoBehaviour:
   _gameObjects: []
   _monoBehaviours:
   - {fileID: 4464419641693729567}
-  - {fileID: 6454134197847342584}
 --- !u!1 &8030197382972942297
 GameObject:
   m_ObjectHideFlags: 0

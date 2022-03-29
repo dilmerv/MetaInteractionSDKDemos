@@ -10,17 +10,59 @@
  * permissions and limitations under the License.
  **************************************************************************************************/
 
+using System;
 using UnityEngine;
 
 namespace Oculus.Voice.Utility
 {
-    public class VoiceSDKStyles
+    public static class VoiceSDKStyles
     {
+        [Serializable]
+        public struct VoiceSDKTexts
+        {
+            [Header("Setup Texts")]
+            public string SetupTitleLabel;
+            public string SetupSubheaderLabel;
+            public string SetupLanguageLabel;
+            [Header("About Texts")]
+            public string AboutTitleLabel;
+            public string AboutCloseLabel;
+            public string AboutVoiceSdkVersionLabel;
+            public string AboutWitSdkVersionLabel;
+            public string AboutWitApiVersionLabel;
+            public string AboutTutorialButtonLabel;
+            public string AboutTutorialButtonUrl;
+            [Header("Settings Texts")]
+            public string SettingsTitleLabel;
+            [Header("Understanding Viewer Texts")]
+            public string UnderstandingViewerTitleLabel;
+        }
+        public static VoiceSDKTexts Texts;
+
         public static Texture2D MainHeader;
+        public static GUIContent SetupTitle;
+        public static GUIContent AboutTitle;
+        public static GUIContent SettingsTitle;
+        public static GUIContent UnderstandingTitle;
 
         static VoiceSDKStyles()
         {
+            // Load localization
+            string languageID = "en-us";
+            string textFilePath = $"voicesdk_texts_{languageID}";
+            TextAsset textAsset = Resources.Load<TextAsset>(textFilePath);
+            if (textAsset == null)
+            {
+                Debug.LogError($"VoiceSDK Texts - Add localization to Resources/{textFilePath}\nLanguage: {languageID}");
+                return;
+            }
+            Texts = JsonUtility.FromJson<VoiceSDKTexts>(textAsset.text);
+
             MainHeader = (Texture2D) Resources.Load("voicesdk_heroart");
+            SetupTitle = new GUIContent(Texts.SetupTitleLabel);
+            AboutTitle = new GUIContent(Texts.AboutTitleLabel);
+            SettingsTitle = new GUIContent(Texts.SettingsTitleLabel);
+            UnderstandingTitle = new GUIContent(Texts.UnderstandingViewerTitleLabel);
         }
     }
 }

@@ -136,8 +136,8 @@ namespace Oculus.Interaction.GrabAPI
             _thumbRequirement = FingerRequirement.Required,
             _indexRequirement = FingerRequirement.Optional,
             _middleRequirement = FingerRequirement.Optional,
-            _ringRequirement = FingerRequirement.Optional,
-            _pinkyRequirement = FingerRequirement.Optional,
+            _ringRequirement = FingerRequirement.Ignored,
+            _pinkyRequirement = FingerRequirement.Ignored,
 
             _unselectMode = FingerUnselectMode.AllReleased
         };

@@ -23,5 +23,6 @@ Material:
     m_Colors:
     - _BorderColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 0.60784316}
-    - _Dimensions: {r: 1, g: 1, b: 1, a: 0}
+    - _Dimensions: {r: 0.01, g: 0.04, b: 0.002, a: 0}
     - _Radii: {r: 0.2, g: 0.2, b: 0.2, a: 0.2}
+  m_BuildTextureStacks: []

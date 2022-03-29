@@ -16,13 +16,13 @@ using UnityEngine.Assertions;
 namespace Oculus.Interaction.Input
 {
     public abstract class
-        DataModifier<TData, TConfig> : DataSource<TData, TConfig>
+        DataModifier<TData> : DataSource<TData>
         where TData : class, ICopyFrom<TData>, new()
     {
         [Header("Data Modifier")]
         [SerializeField, Interface(nameof(_modifyDataFromSource))]
         protected MonoBehaviour _iModifyDataFromSourceMono;
-        private IDataSource<TData, TConfig> _modifyDataFromSource;
+        private IDataSource<TData> _modifyDataFromSource;
 
         [SerializeField]
         [Tooltip("If this is false, then this modifier will simply pass through " +
@@ -33,12 +33,11 @@ namespace Oculus.Interaction.Input
         private static TData InvalidAsset { get; } = new TData();
         private TData _thisDataAsset;
         private TData _currentDataAsset = InvalidAsset;
-        private TConfig _configCache;
 
         protected override TData DataAsset => _currentDataAsset;
 
-        public virtual IDataSource<TData, TConfig> ModifyDataFromSource => _modifyDataFromSource == null
-            ? (_modifyDataFromSource = _iModifyDataFromSourceMono as IDataSource<TData, TConfig>)
+        public virtual IDataSource<TData> ModifyDataFromSource => _modifyDataFromSource == null
+            ? (_modifyDataFromSource = _iModifyDataFromSourceMono as IDataSource<TData>)
             : _modifyDataFromSource;
 
         public override int CurrentDataVersion
@@ -51,12 +50,11 @@ namespace Oculus.Interaction.Input
             }
         }
 
-        public void ResetSources(IDataSource<TData, TConfig> modifyDataFromSource, IDataSource updateAfter, UpdateModeFlags updateMode)
+        public void ResetSources(IDataSource<TData> modifyDataFromSource, IDataSource updateAfter, UpdateModeFlags updateMode)
         {
             ResetUpdateAfter(updateAfter, updateMode);
             _modifyDataFromSource = modifyDataFromSource;
             _currentDataAsset = InvalidAsset;
-            _configCache = default;
         }
 
         protected override void UpdateData()
@@ -86,25 +84,15 @@ namespace Oculus.Interaction.Input
             Assert.IsNotNull(ModifyDataFromSource);
         }
 
-        public override TConfig Config
-        {
-            get
-            {
-                return _configCache != null
-                    ? _configCache
-                    : (_configCache = ModifyDataFromSource.Config);
-            }
-        }
-
         #region Inject
-        public void InjectAllDataModifier(UpdateModeFlags updateMode, IDataSource updateAfter, IDataSource<TData, TConfig> modifyDataFromSource, bool applyModifier)
+        public void InjectAllDataModifier(UpdateModeFlags updateMode, IDataSource updateAfter, IDataSource<TData> modifyDataFromSource, bool applyModifier)
         {
             base.InjectAllDataSource(updateMode, updateAfter);
             InjectModifyDataFromSource(modifyDataFromSource);
             InjectApplyModifier(applyModifier);
         }
 
-        public void InjectModifyDataFromSource(IDataSource<TData, TConfig> modifyDataFromSource)
+        public void InjectModifyDataFromSource(IDataSource<TData> modifyDataFromSource)
         {
             _modifyDataFromSource = modifyDataFromSource;
         }

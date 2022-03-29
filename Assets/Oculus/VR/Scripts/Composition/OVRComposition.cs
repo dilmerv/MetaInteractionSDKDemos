@@ -50,10 +50,10 @@ public abstract class OVRComposition {
 		Debug.Log(cameraRig == null ? "[OVRComposition] CameraRig not found" : "[OVRComposition] CameraRig found");
 	}
 
-	public OVRPose ComputeCameraWorldSpacePose(OVRPlugin.CameraExtrinsics extrinsics)
+	public OVRPose ComputeCameraWorldSpacePose(OVRPlugin.CameraExtrinsics extrinsics, Camera mainCamera)
 	{
 		OVRPose trackingSpacePose = ComputeCameraTrackingSpacePose(extrinsics);
-		OVRPose worldSpacePose = OVRExtensions.ToWorldSpacePose(trackingSpacePose);
+		OVRPose worldSpacePose = OVRExtensions.ToWorldSpacePose(trackingSpacePose, mainCamera);
 		return worldSpacePose;
 	}
 

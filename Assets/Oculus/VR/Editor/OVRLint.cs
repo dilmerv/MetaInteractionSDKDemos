@@ -754,6 +754,16 @@ public class OVRLint : EditorWindow
 			}, null, false, "Fix");
 		}
 
+#if USING_XR_SDK
+		if (OVRPluginUpdater.IsOVRPluginOpenXRActivated() && PlayerSettings.colorSpace != ColorSpace.Linear)
+		{
+			AddFix(eRecordType.StaticAndroid, "Set Color Space to Linear", "Oculus Utilities Plugin with OpenXR only supports linear lighting.",
+				delegate (UnityEngine.Object obj, bool last, int selected)
+			{
+				PlayerSettings.colorSpace = ColorSpace.Linear;
+			}, null, false, "Fix");
+		}
+#endif
 
 		if (RenderSettings.skybox)
 		{

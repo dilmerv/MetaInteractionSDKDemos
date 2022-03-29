@@ -74,9 +74,10 @@ namespace Facebook.WitAi
 
         public const string URI_SCHEME = "https";
         public const string URI_AUTHORITY = "api.wit.ai";
+        public const int URI_DEFAULT_PORT = 0;
 
         public const string WIT_API_VERSION = "20210928";
-        public const string WIT_SDK_VERSION = "0.0.25";
+        public const string WIT_SDK_VERSION = "0.0.26";
 
         public const string WIT_ENDPOINT_SPEECH = "speech";
         public const string WIT_ENDPOINT_MESSAGE = "message";
@@ -87,8 +88,6 @@ namespace Facebook.WitAi
         public const string WIT_ENDPOINT_UTTERANCES = "utterances";
 
         private WitConfiguration configuration;
-
-        private Stream activeStream;
 
         private string command;
         private string path;
@@ -269,9 +268,9 @@ namespace Facebook.WitAi
             uriBuilder.Host = endpointConfig.Authority;
 
             var api = endpointConfig.WitApiVersion;
-            if (endpointConfig.port > 0)
+            if (endpointConfig.Port > 0)
             {
-                uriBuilder.Port = endpointConfig.port;
+                uriBuilder.Port = endpointConfig.Port;
             }
 
             uriBuilder.Query = $"v={api}";
@@ -353,7 +352,7 @@ namespace Facebook.WitAi
             }
 #endif
 
-            request.UserAgent = $"voice-sdk-37.0.0.112.109,wit-unity-{WIT_SDK_VERSION},{operatingSystem},{deviceModel},{configId},{appIdentifier}";
+            request.UserAgent = $"voice-sdk-38.0.0.48.727,wit-unity-{WIT_SDK_VERSION},{operatingSystem},{deviceModel},{configId},{appIdentifier}";
 
 #if UNITY_EDITOR
             request.UserAgent += ",Editor";

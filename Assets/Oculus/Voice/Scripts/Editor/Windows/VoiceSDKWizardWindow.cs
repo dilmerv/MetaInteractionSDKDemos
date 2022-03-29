@@ -18,18 +18,5 @@ namespace Oculus.Voice.Windows
 {
     public class VoiceSDKWizardWindow : ScriptableWizard
     {
-        protected virtual float ContentHeight => 0;
-        protected virtual float ContentWidth => 415;
-
-        protected override bool DrawWizardGUI()
-        {
-            var header = VoiceSDKStyles.MainHeader;
-            var headerHeight = header.height * (ContentWidth - 4) / header.width;
-            maxSize = new Vector2(ContentWidth, ContentHeight + headerHeight);
-            minSize = maxSize;
-            GUILayout.Box(header, GUILayout.Width(ContentWidth - 8), GUILayout.Height(headerHeight));
-
-            return false;
-        }
     }
 }

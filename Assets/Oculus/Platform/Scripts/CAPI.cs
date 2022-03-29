@@ -1548,6 +1548,9 @@ namespace Oculus.Platform
     public static extern ulong ovr_User_GetSdkAccounts();
 
     [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
+    public static extern ulong ovr_User_GetUserCapabilities();
+
+    [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
     public static extern ulong ovr_User_GetUserProof();
 
     [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
@@ -3179,6 +3182,9 @@ namespace Oculus.Platform
     public static extern IntPtr ovr_Message_GetUserArray(IntPtr obj);
 
     [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
+    public static extern IntPtr ovr_Message_GetUserCapabilityArray(IntPtr obj);
+
+    [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
     public static extern IntPtr ovr_Message_GetUserDataStoreUpdateResponse(IntPtr obj);
 
     [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
@@ -3857,6 +3863,50 @@ namespace Oculus.Platform
 
     [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
     public static extern bool ovr_UserArray_HasNextPage(IntPtr obj);
+
+    public static string ovr_UserCapability_GetDescription(IntPtr obj) {
+      var result = StringFromNative(ovr_UserCapability_GetDescription_Native(obj));
+      return result;
+    }
+
+    [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl, EntryPoint="ovr_UserCapability_GetDescription")]
+    private static extern IntPtr ovr_UserCapability_GetDescription_Native(IntPtr obj);
+
+    [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
+    public static extern bool ovr_UserCapability_GetIsEnabled(IntPtr obj);
+
+    public static string ovr_UserCapability_GetName(IntPtr obj) {
+      var result = StringFromNative(ovr_UserCapability_GetName_Native(obj));
+      return result;
+    }
+
+    [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl, EntryPoint="ovr_UserCapability_GetName")]
+    private static extern IntPtr ovr_UserCapability_GetName_Native(IntPtr obj);
+
+    public static string ovr_UserCapability_GetReasonCode(IntPtr obj) {
+      var result = StringFromNative(ovr_UserCapability_GetReasonCode_Native(obj));
+      return result;
+    }
+
+    [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl, EntryPoint="ovr_UserCapability_GetReasonCode")]
+    private static extern IntPtr ovr_UserCapability_GetReasonCode_Native(IntPtr obj);
+
+    [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
+    public static extern IntPtr ovr_UserCapabilityArray_GetElement(IntPtr obj, UIntPtr index);
+
+    public static string ovr_UserCapabilityArray_GetNextUrl(IntPtr obj) {
+      var result = StringFromNative(ovr_UserCapabilityArray_GetNextUrl_Native(obj));
+      return result;
+    }
+
+    [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl, EntryPoint="ovr_UserCapabilityArray_GetNextUrl")]
+    private static extern IntPtr ovr_UserCapabilityArray_GetNextUrl_Native(IntPtr obj);
+
+    [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
+    public static extern UIntPtr ovr_UserCapabilityArray_GetSize(IntPtr obj);
+
+    [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
+    public static extern bool ovr_UserCapabilityArray_HasNextPage(IntPtr obj);
 
     [DllImport(DLL_NAME, CallingConvention=CallingConvention.Cdecl)]
     public static extern bool ovr_UserDataStoreUpdateResponse_GetSuccess(IntPtr obj);

@@ -42,6 +42,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -256,6 +257,13 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      RoundCorners_12pt: 72494806423646354
+      RoundCorners_16pt: 677149704152372326
+      RoundCorners_08pt: -9220748665759891878
+      RoundCorners_04pt: 8135366055003731584
+      RoundCorners_30pt: -1938207125527859653
+      RoundCorners_02pt: 5097799661935223442
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

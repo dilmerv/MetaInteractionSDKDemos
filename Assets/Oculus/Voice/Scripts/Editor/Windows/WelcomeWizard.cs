@@ -11,66 +11,31 @@
  **************************************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using Facebook.WitAi;
+using Facebook.WitAi.Data.Configuration;
+using Facebook.WitAi.Windows;
+using Oculus.Voice.Utility;
 using UnityEditor;
 using UnityEngine;
 
 namespace Oculus.Voice.Windows
 {
-    public class WelcomeWizard : VoiceSDKWizardWindow
+    public class WelcomeWizard : WitWelcomeWizard
     {
-        [SerializeField] private string serverToken;
-        [SerializeField] private int witBuiltInIndex;
-
-        protected override float ContentHeight
-        {
-            get
-            {
-                var height = 250f;
-                if (witBuiltInIndex <= 0)
-                {
-                    height += 3 * EditorGUIUtility.singleLineHeight;
-                }
-
-                return height;
-            }
-        }
-
+        private int witBuiltInIndex;
         private string[] builtinAppNames;
-        public Action successAction;
+        
+        protected override Texture2D HeaderIcon => VoiceSDKStyles.MainHeader;
+        protected override GUIContent Title => VoiceSDKStyles.SetupTitle;
+        protected override string ContentSubheaderLabel => VoiceSDKStyles.Texts.SetupSubheaderLabel;
 
-        private void OnWizardCreate()
-        {
-            if (witBuiltInIndex == 0)
-            {
-                WitAuthUtility.ServerToken = serverToken;
-            }
-
-            if (WitAuthUtility.IsServerTokenValid())
-            {
-                if (witBuiltInIndex > 0)
-                {
-                    SettingsWindow.CreateConfiguration(WitAuthUtility.ServerToken,
-                        builtinAppNames[witBuiltInIndex], successAction);
-                }
-                else
-                {
-                    SettingsWindow.CreateConfiguration(WitAuthUtility.ServerToken, null, successAction);
-                }
-
-                Close();
-            }
-            else
-            {
-                throw new ArgumentException(
-                    "Server token is not valid. Please set a server token.");
-            }
-        }
-
-        protected virtual void OnEnable()
+        protected override void OnEnable()
         {
             WitAuthUtility.InitEditorTokens();
             WitAuthUtility.tokenValidator = new VoiceSDKTokenValidatorProvider();
+            base.OnEnable();
+            witBuiltInIndex = 0;
             var names = AppBuiltIns.appNames;
             builtinAppNames = new string[names.Length + 1];
             builtinAppNames[0] = "Custom App";
@@ -80,71 +45,57 @@ namespace Oculus.Voice.Windows
             }
         }
 
-        protected override bool DrawWizardGUI()
+        protected override void LayoutFields()
         {
-            base.DrawWizardGUI();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(24);
-            GUILayout.BeginVertical();
-            GUILayout.Label("Building App Voice Experiences", WitStyles.LabelHeader, GUILayout.Height(64));
-            GUILayout.Label(
-                "Empowering developers to build engaging voice interactions.",GUILayout.Height(EditorGUIUtility.singleLineHeight * 2));
-            GUILayout.EndVertical();
-            GUILayout.Space(24);
-            GUILayout.EndHorizontal();
-
-
-            BaseWitWindow.BeginCenter(296);
-            GUILayout.Label("Select language to use Built-In NLP", WitStyles.Label);
-            int selected = EditorGUILayout.Popup("", witBuiltInIndex, builtinAppNames);
-            if (selected != witBuiltInIndex)
+            // Prebuilt language app
+            bool updated = false;
+            WitEditorUI.LayoutLabel(VoiceSDKStyles.Texts.SetupLanguageLabel);
+            WitEditorUI.LayoutPopup("", builtinAppNames, ref witBuiltInIndex, ref updated);
+            if (updated)
             {
-                witBuiltInIndex = selected;
-                WitAuthUtility.ServerToken =
-                    AppBuiltIns.builtInPrefix + AppBuiltIns.appNames[witBuiltInIndex];
-            }
-
-            BaseWitWindow.EndCenter();
-
-            if (witBuiltInIndex <= 0)
-            {
-                GUILayout.Space(16);
-
-                BaseWitWindow.BeginCenter(296);
-
-                GUILayout.BeginHorizontal();
-                var color = "blue";
-                if (EditorGUIUtility.isProSkin)
-                {
-                    color = "#ccccff";
-                }
-                if (GUILayout.Button(
-                    $"Paste your <color={color}>Wit.ai</color> Server Access Token here",
-                    WitStyles.Label))
-                {
-                    Application.OpenURL("https://wit.ai/apps");
-                }
-
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button(WitStyles.PasteIcon, WitStyles.Label))
-                {
-                    serverToken = EditorGUIUtility.systemCopyBuffer;
-                    WitAuthUtility.ServerToken = serverToken;
-
-                }
-
-                GUILayout.EndHorizontal();
-                if (null == serverToken)
+                if (witBuiltInIndex == 0)
                 {
                     serverToken = WitAuthUtility.ServerToken;
                 }
-
-                serverToken = EditorGUILayout.PasswordField(serverToken);
-                BaseWitWindow.EndCenter();
+                else
+                {
+                    serverToken = AppBuiltIns.builtInPrefix + builtinAppNames[witBuiltInIndex];
+                }
             }
-
-            return WitAuthUtility.IsServerTokenValid();
+            
+            // Base fields
+            if (witBuiltInIndex == 0)
+            {
+                GUILayout.Space(WitStyles.HeaderPaddingBottom);
+                base.LayoutFields();
+            }
+        }
+        
+        // Customize configuration if voice app was selected
+        protected override int CreateConfiguration(string newToken)
+        {
+            // Do base for custom app
+            if (witBuiltInIndex <= 0)
+            {
+                return base.CreateConfiguration(newToken);
+            }
+            
+            // Get built in app data
+            string languageName = builtinAppNames[witBuiltInIndex];
+            Dictionary<string, string> appData = AppBuiltIns.apps[languageName];
+            
+            // Generate asset using app data
+            WitConfiguration configuration = ScriptableObject.CreateInstance<WitConfiguration>();
+            configuration.clientAccessToken = appData["clientToken"];
+            WitApplication application = new WitApplication();
+            application.name = appData["name"];
+            application.id = appData["id"];
+            application.lang = appData["lang"];
+            configuration.application = application;
+            configuration.name = application.id;
+            
+            // Save configuration to asset
+            return WitConfigurationUtility.SaveConfiguration(newToken, configuration);
         }
     }
 

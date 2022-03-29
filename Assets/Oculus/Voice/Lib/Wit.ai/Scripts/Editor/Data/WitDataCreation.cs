@@ -33,19 +33,16 @@ namespace Facebook.WitAi.Data
 
         public static void AddWitToScene()
         {
-            var witGo = new GameObject();
-            witGo.name = "Wit";
+            var witGo = new GameObject
+            {
+                name = "Wit"
+            };
             var wit = witGo.AddComponent<Wit>();
             var runtimeConfiguration = new WitRuntimeConfiguration()
             {
                 witConfiguration = FindDefaultWitConfig()
             };
             wit.RuntimeConfiguration = runtimeConfiguration;
-        }
-
-        public static void WitStringValue()
-        {
-            CreateStringValue("");
         }
 
         public static WitStringValue CreateStringValue(string path)
@@ -55,21 +52,11 @@ namespace Facebook.WitAi.Data
             return asset;
         }
 
-        public static void WitFloatValue()
-        {
-            CreateFloatValue("");
-        }
-
         public static WitFloatValue CreateFloatValue(string path)
         {
             var asset = ScriptableObject.CreateInstance<WitFloatValue>();
             CreateValueAsset("Create Float Value", path, asset);
             return asset;
-        }
-
-        public static void WitIntValue()
-        {
-            CreateStringValue("");
         }
 
         public static WitIntValue CreateIntValue(string path)
@@ -107,11 +94,6 @@ namespace Facebook.WitAi.Data
                 AssetDatabase.CreateAsset(asset, filePath);
                 AssetDatabase.SaveAssets();
             }
-        }
-
-        public static void CreateWitConfiguration()
-        {
-            WitConfigurationEditor.CreateWitConfiguration(WitAuthUtility.ServerToken, null);
         }
     }
 }

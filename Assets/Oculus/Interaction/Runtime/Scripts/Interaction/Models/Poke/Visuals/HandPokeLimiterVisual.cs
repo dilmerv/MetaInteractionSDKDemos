@@ -28,13 +28,11 @@ namespace Oculus.Interaction
         private MonoBehaviour _hand;
         private IHand Hand;
 
-        [FormerlySerializedAs("_interactor")]
         [SerializeField]
         private PokeInteractor _pokeInteractor;
 
-        [FormerlySerializedAs("_modifier")]
         [SerializeField]
-        private SyntheticHandModifier _syntheticHand;
+        private SyntheticHand _syntheticHand;
 
         [SerializeField]
         private float _maxDistanceFromTouchPoint = 0.1f;
@@ -99,11 +97,9 @@ namespace Oculus.Interaction
             _isTouching = false;
         }
 
-        private Vector3 ComputePlanePosition(Vector3 point, PokeInteractable interactable)
+        private Vector3 ComputeSurfacePosition(Vector3 point, PokeInteractable interactable)
         {
-            Vector3 planeToPoint = point - interactable.TriggerPlaneTransform.position;
-            Vector3 projectOnNormal = Vector3.Project(planeToPoint, -1f * interactable.TriggerPlaneTransform.forward);
-            return point - projectOnNormal;
+            return interactable.ClosestSurfacePoint(point);
         }
 
         private void UpdateWrist()
@@ -115,27 +111,27 @@ namespace Oculus.Interaction
                 return;
             }
 
-            Vector3 planePosition = ComputePlanePosition(_pokeInteractor.Origin, _pokeInteractor.SelectedInteractable);
-            _maxDeltaFromTouchPoint = Mathf.Max((planePosition - _initialTouchPoint).magnitude, _maxDeltaFromTouchPoint);
+            Vector3 surfacePosition = ComputeSurfacePosition(_pokeInteractor.Origin, _pokeInteractor.SelectedInteractable);
+            _maxDeltaFromTouchPoint = Mathf.Max((surfacePosition - _initialTouchPoint).magnitude, _maxDeltaFromTouchPoint);
 
             float deltaAsPercent =
                 Mathf.Clamp01(_maxDeltaFromTouchPoint / _maxDistanceFromTouchPoint);
 
-            Vector3 fullDelta = planePosition - _initialTouchPoint;
+            Vector3 fullDelta = surfacePosition - _initialTouchPoint;
             Vector3 easedPosition = _initialTouchPoint + fullDelta * deltaAsPercent;
 
             Vector3 positionDelta = rootPose.position - _pokeInteractor.Origin;
             Vector3 targetPosePosition = easedPosition + positionDelta;
             Pose wristPoseOverride = new Pose(targetPosePosition, rootPose.rotation);
 
-            _syntheticHand.LockWristPose(wristPoseOverride, 1.0f, SyntheticHandModifier.WristLockMode.Full, true, true);
+            _syntheticHand.LockWristPose(wristPoseOverride, 1.0f, SyntheticHand.WristLockMode.Full, true, true);
             _syntheticHand.MarkInputDataRequiresUpdate();
         }
 
         #region Inject
 
         public void InjectAllHandPokeLimiterVisual(IHand hand, PokeInteractor pokeInteractor,
-            SyntheticHandModifier syntheticHand)
+            SyntheticHand syntheticHand)
         {
             InjectHand(hand);
             InjectPokeInteractor(pokeInteractor);
@@ -153,7 +149,7 @@ namespace Oculus.Interaction
             _pokeInteractor = pokeInteractor;
         }
 
-        public void InjectSyntheticHand(SyntheticHandModifier syntheticHand)
+        public void InjectSyntheticHand(SyntheticHand syntheticHand)
         {
             _syntheticHand = syntheticHand;
         }

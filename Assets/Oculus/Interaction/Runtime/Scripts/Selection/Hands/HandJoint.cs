@@ -23,11 +23,9 @@ namespace Oculus.Interaction
         private MonoBehaviour _hand;
         public IHand Hand { get; private set; }
 
-        [FormerlySerializedAs("_jointId")]
         [SerializeField]
         private HandJointId _handJointId;
 
-        [FormerlySerializedAs("_offset")]
         [SerializeField]
         private Vector3 _localPositionOffset;
 
@@ -92,7 +90,7 @@ namespace Oculus.Interaction
         {
             if (_started)
             {
-                Hand.HandUpdated += HandleHandUpdated;
+                Hand.WhenHandUpdated += HandleHandUpdated;
             }
         }
 
@@ -100,7 +98,7 @@ namespace Oculus.Interaction
         {
             if (_started)
             {
-                Hand.HandUpdated -= HandleHandUpdated;
+                Hand.WhenHandUpdated -= HandleHandUpdated;
             }
         }
 

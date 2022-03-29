@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5419937293532398301}
   - component: {fileID: 5346183831593185114}
   - component: {fileID: 482801000701448007}
-  - component: {fileID: 2687178331615485171}
   - component: {fileID: 7235919250664999267}
   m_Layer: 0
   m_Name: HandPokeInteractor
@@ -60,6 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d952c175ec3c6554199fd744548ce50a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _activeState: {fileID: 5346183831593185114}
   _interactableFilters: []
   _pointTransform: {fileID: 5419937294994736466}
   _touchReleaseThreshold: 0.002
@@ -89,21 +89,6 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     _animationLength: 1
---- !u!114 &2687178331615485171
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5419937293532398298}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba7282e6cbb44d94b9399c80f4c2c7e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interactor: {fileID: 482801000701448007}
-  _selector: {fileID: 0}
-  _activeState: {fileID: 5346183831593185114}
 --- !u!114 &7235919250664999267
 MonoBehaviour:
   m_ObjectHideFlags: 0

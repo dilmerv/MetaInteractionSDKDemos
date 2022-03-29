@@ -58,6 +58,7 @@ namespace Oculus.Interaction.PoseDetection
         public Handedness Handedness;
         public Pose CenterEyePose, WristPose;
         public Vector3 TrackingSystemUp;
+        public Vector3 TrackingSystemForward;
     }
 
     internal class TransformFeatureStateCollection
@@ -206,7 +207,7 @@ namespace Oculus.Interaction.PoseDetection
         {
             if (_started)
             {
-                Hand.HandUpdated += HandDataAvailable;
+                Hand.WhenHandUpdated += HandDataAvailable;
             }
         }
 
@@ -214,7 +215,7 @@ namespace Oculus.Interaction.PoseDetection
         {
             if (_started)
             {
-                Hand.HandUpdated -= HandDataAvailable;
+                Hand.WhenHandUpdated -= HandDataAvailable;
             }
         }
 
@@ -235,6 +236,7 @@ namespace Oculus.Interaction.PoseDetection
 
             _jointData.Handedness = Hand.Handedness;
             _jointData.TrackingSystemUp = TrackingToWorldTransformer.Transform.up;
+            _jointData.TrackingSystemForward = TrackingToWorldTransformer.Transform.forward;
         }
 
         private void UpdateStateForHand()

@@ -17,7 +17,7 @@ namespace Oculus.Interaction
 {
     public interface ITransformer
     {
-        void Initialize(ITransformable transformable);
+        void Initialize(IGrabbable grabbable);
         void BeginTransform();
         void UpdateTransform();
         void EndTransform();

@@ -32,7 +32,7 @@ namespace Oculus.Interaction.Input
         Transform LeftController { get; }
         Transform RightController { get; }
 
-        event Action OnAnchorsUpdated;
+        event Action<bool> WhenInputDataDirtied;
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ namespace Oculus.Interaction.Input
     {
         [Header("Configuration")]
         [SerializeField]
-        private OVRCameraRig _ovrCameraRig;
+        private InteractionOVRCameraRig _ovrCameraRig;
 
         [SerializeField]
         private bool _requireOvrHands = true;
@@ -61,7 +61,7 @@ namespace Oculus.Interaction.Input
         public Transform LeftController => _ovrCameraRig.leftControllerAnchor;
         public Transform RightController => _ovrCameraRig.rightControllerAnchor;
 
-        public event Action OnAnchorsUpdated = delegate { };
+        public event Action<bool> WhenInputDataDirtied = delegate { };
 
         protected bool _started = false;
 
@@ -76,7 +76,7 @@ namespace Oculus.Interaction.Input
         {
             if (_started)
             {
-                _ovrCameraRig.UpdatedAnchors += OnUpdateAnchors;
+                _ovrCameraRig.WhenInputDataDirtied += HandleInputDataDirtied;
             }
         }
 
@@ -84,7 +84,7 @@ namespace Oculus.Interaction.Input
         {
             if (_started)
             {
-                _ovrCameraRig.UpdatedAnchors -= OnUpdateAnchors;
+                _ovrCameraRig.WhenInputDataDirtied -= HandleInputDataDirtied;
             }
         }
 
@@ -104,19 +104,19 @@ namespace Oculus.Interaction.Input
             return cachedValue;
         }
 
-        private void OnUpdateAnchors(OVRCameraRig ovrCameraRig)
+        private void HandleInputDataDirtied(bool isLateUpdate)
         {
-            OnAnchorsUpdated();
+            WhenInputDataDirtied(isLateUpdate);
         }
 
         #region Inject
-        public void InjectAllOVRCameraRigRef(OVRCameraRig ovrCameraRig, bool requireHands)
+        public void InjectAllOVRCameraRigRef(InteractionOVRCameraRig ovrCameraRig, bool requireHands)
         {
-            InjectOVRCameraRig(ovrCameraRig);
+            InjectInteractionOVRCameraRig(ovrCameraRig);
             InjectRequireHands(requireHands);
         }
 
-        public void InjectOVRCameraRig(OVRCameraRig ovrCameraRig)
+        public void InjectInteractionOVRCameraRig(InteractionOVRCameraRig ovrCameraRig)
         {
             _ovrCameraRig = ovrCameraRig;
             // Clear the cached values to force new values to be read on next access

@@ -8,81 +8,79 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using Facebook.WitAi.Data.Configuration;
 
-namespace Facebook.WitAi.Data.Configuration
+namespace Facebook.WitAi.Windows
 {
-    public class WitWelcomeWizard : ScriptableWizard
+    public class WitWelcomeWizard : WitScriptableWizard
     {
-        private Texture2D tex;
-        private bool manualToken;
-        protected WitConfigurationEditor witEditor;
         protected string serverToken;
         public Action successAction;
 
-        protected virtual void OnWizardCreate()
+        protected override Texture2D HeaderIcon => WitStyles.HeaderIcon;
+        protected override GUIContent Title => WitStyles.SetupTitleContent;
+        protected override string ButtonLabel => WitStyles.Texts.SetupSubmitButtonLabel;
+        protected override string ContentSubheaderLabel => WitStyles.Texts.SetupSubheaderLabel;
+
+        protected override void OnEnable()
         {
-            ValidateAndClose();
-        }
-        protected void ValidateAndClose()
-        {
-
-            WitAuthUtility.ServerToken = serverToken;
-            if (WitAuthUtility.IsServerTokenValid())
-            {
-                Close();
-                WitWindow.ShowWindow();
-                successAction?.Invoke();
-            }
-            else
-            {
-                throw new ArgumentException("Please enter a valid token before linking.");
-            }
-        }
-
-        protected override bool DrawWizardGUI()
-        {
-            maxSize = minSize = new Vector2(400, 375);
-            BaseWitWindow.DrawHeader("https://wit.ai/apps");
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(16);
-            GUILayout.BeginVertical();
-            GUILayout.Label("Build Natural Language Experiences", WitStyles.LabelHeader);
-            GUILayout.Label(
-                "Empower people to use your product with voice and text",
-                WitStyles.LabelHeader2);
-            GUILayout.EndVertical();
-            GUILayout.Space(16);
-            GUILayout.EndHorizontal();
-            GUILayout.Space(32);
-
-            BaseWitWindow.BeginCenter(296);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Paste your Server Access Token here", WitStyles.Label);
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button(WitStyles.PasteIcon, WitStyles.Label))
-            {
-                serverToken = EditorGUIUtility.systemCopyBuffer;
-                WitAuthUtility.ServerToken = serverToken;
-                ValidateAndClose();
-            }
-            GUILayout.EndHorizontal();
-            if (null == serverToken)
+            base.OnEnable();
+            if (string.IsNullOrEmpty(serverToken))
             {
                 serverToken = WitAuthUtility.ServerToken;
             }
-            serverToken = EditorGUILayout.PasswordField(serverToken, WitStyles.TextField);
-            BaseWitWindow.EndCenter();
-
-            return WitAuthUtility.IsServerTokenValid();
         }
-
-        public static void ShowWizard(Action successAction)
+        protected override bool DrawWizardGUI()
         {
-            var wizard =
-                ScriptableWizard.DisplayWizard<WitWelcomeWizard>("Welcome to Wit.ai", "Link");
-            wizard.successAction = successAction;
+            // Layout base
+            base.DrawWizardGUI();
+            // True if valid server token
+            return WitConfigurationUtility.IsServerTokenValid(serverToken);
+        }
+        protected override void LayoutFields()
+        {
+            string serverTokenLabelText = WitStyles.Texts.SetupServerTokenLabel;
+            serverTokenLabelText = serverTokenLabelText.Replace(WitStyles.WitLinkKey, WitStyles.WitLinkColor);
+            if (GUILayout.Button(serverTokenLabelText, WitStyles.Label))
+            {
+                Application.OpenURL(WitStyles.GetAppURL("", WitStyles.WitAppEndpointType.Settings));
+            }
+            bool updated = false;
+            WitEditorUI.LayoutPasswordField(null, ref serverToken, ref updated);
+        }
+        protected override void OnWizardCreate()
+        {
+            ValidateAndClose();
+        }
+        protected virtual void ValidateAndClose()
+        {
+            WitAuthUtility.ServerToken = serverToken;
+            if (WitAuthUtility.IsServerTokenValid())
+            {
+                // Create configuration
+                int index = CreateConfiguration(serverToken);
+                if (index != -1)
+                {
+                    // Complete
+                    Close();
+                    if (successAction == null)
+                    {
+                        WitWindowUtility.OpenConfigurationWindow();
+                    }
+                    else
+                    {
+                        successAction();
+                    }
+                }
+            }
+            else
+            {
+                throw new ArgumentException(WitStyles.Texts.SetupSubmitFailLabel);
+            }
+        }
+        protected virtual int CreateConfiguration(string newToken)
+        {
+            return WitConfigurationUtility.CreateConfiguration(newToken);
         }
     }
 }

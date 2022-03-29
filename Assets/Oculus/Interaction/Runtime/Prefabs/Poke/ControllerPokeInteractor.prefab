@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1933587497558213154}
   - component: {fileID: 6890038641385330087}
   - component: {fileID: 6291888386235912120}
-  - component: {fileID: 8406181604202732556}
   - component: {fileID: 8292141489895622021}
   m_Layer: 0
   m_Name: ControllerPokeInteractor
@@ -60,6 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d952c175ec3c6554199fd744548ce50a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _activeState: {fileID: 0}
   _interactableFilters: []
   _pointTransform: {fileID: 7784094158884016172}
   _touchReleaseThreshold: 0.002
@@ -89,21 +89,6 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     _animationLength: 1
---- !u!114 &8406181604202732556
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1933587497558213157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba7282e6cbb44d94b9399c80f4c2c7e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interactor: {fileID: 6291888386235912120}
-  _selector: {fileID: 0}
-  _activeState: {fileID: 0}
 --- !u!114 &8292141489895622021
 MonoBehaviour:
   m_ObjectHideFlags: 0

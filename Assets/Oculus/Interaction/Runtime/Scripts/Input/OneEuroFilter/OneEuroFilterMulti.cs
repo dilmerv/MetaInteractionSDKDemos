@@ -70,6 +70,14 @@ namespace Oculus.Interaction.Input
                 Value = _arrayToType(_componentValues);
                 return Value;
             }
+
+            public void Reset()
+            {
+                foreach (var filter in _filters)
+                {
+                    filter.Reset();
+                }
+            }
         }
     }
 }

@@ -10,53 +10,49 @@ ANY KIND, either express or implied. See the License for the specific language g
 permissions and limitations under the License.
 ************************************************************************************/
 
-using Oculus.Interaction.Throw;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Oculus.Interaction.Throw;
 using UnityEngine.Serialization;
 
 namespace Oculus.Interaction
 {
     public class GrabInteractor : Interactor<GrabInteractor, GrabInteractable>, IRigidbodyRef
     {
-        [SerializeField]
-        private Transform _targetTransform;
+        [SerializeField, Interface(typeof(ISelector))]
+        private MonoBehaviour _selector;
 
         [SerializeField]
         private Rigidbody _rigidbody;
         public Rigidbody Rigidbody => _rigidbody;
 
         [SerializeField, Optional]
-        private Transform _grabAnchorTransform;
+        private Transform _grabCenter;
+
+        [SerializeField, Optional]
+        private Transform _grabTarget;
+
+        private Collider[] _colliders;
+
+        private Tween _tween;
+
+        public float BestInteractableWeight { get; private set; } = float.MaxValue;
 
         [SerializeField, Interface(typeof(IVelocityCalculator)), Optional]
         private MonoBehaviour _velocityCalculator;
         public IVelocityCalculator VelocityCalculator { get; set; }
 
-        private Collider[] _colliders;
-
-        public float BestInteractableWeight { get; private set; } = float.MaxValue;
-
-        public Vector3 GrabPosition => _grabAnchorTransform.position;
-        public Quaternion GrabRotation => _grabAnchorTransform.rotation;
-
         protected override void Awake()
         {
             base.Awake();
+            Selector = _selector as ISelector;
             VelocityCalculator = _velocityCalculator as IVelocityCalculator;
         }
 
         protected override void Start()
         {
-            Assert.IsNotNull(_targetTransform);
-            Assert.IsNotNull(Rigidbody);
-
-            if (_grabAnchorTransform == null)
-            {
-                _grabAnchorTransform = _targetTransform;
-            }
-
+            Assert.IsNotNull(Selector);
             Assert.IsNotNull(Rigidbody);
 
             _colliders = Rigidbody.GetComponentsInChildren<Collider>();
@@ -68,28 +64,35 @@ namespace Oculus.Interaction
                     "Associated Colliders must be marked as Triggers.");
             }
 
+            if (_grabCenter == null)
+            {
+                _grabCenter = transform;
+            }
+
+            if (_grabTarget == null)
+            {
+                _grabTarget = _grabCenter;
+            }
+
             if (_velocityCalculator != null)
             {
                 Assert.IsNotNull(VelocityCalculator);
             }
+
+            _tween = new Tween(Pose.identity);
         }
 
         protected override void DoEveryUpdate()
         {
-            base.DoEveryUpdate();
-
-            transform.position = _targetTransform.position;
-            transform.rotation = _targetTransform.rotation;
-            // Any collider on the Interactor may need updating for
-            // future collision checks this frame
-            Physics.SyncTransforms();
+            transform.position = _grabCenter.position;
+            transform.rotation = _grabCenter.rotation;
         }
 
         protected override GrabInteractable ComputeCandidate()
         {
             GrabInteractable closestInteractable = null;
-            float bestWeight = float.MinValue;
-            float weight = bestWeight;
+            float bestScore = float.MinValue;
+            float score = bestScore;
 
             IEnumerable<GrabInteractable> interactables = GrabInteractable.Registry.List(this);
             foreach (GrabInteractable interactable in interactables)
@@ -102,29 +105,70 @@ namespace Oculus.Interaction
                         // Points within a collider are always weighted better than those outside
                         float sqrDistanceFromCenter =
                             (Rigidbody.transform.position - collider.bounds.center).magnitude;
-                        weight = float.MaxValue - sqrDistanceFromCenter;
+                        score = float.MaxValue - sqrDistanceFromCenter;
                     }
                     else
                     {
                         var position = Rigidbody.transform.position;
                         Vector3 closestPointOnInteractable = collider.ClosestPoint(position);
-                        weight = -1f * (position - closestPointOnInteractable).magnitude;
+                        score = -1f * (position - closestPointOnInteractable).magnitude;
                     }
 
-                    if (weight > bestWeight)
+                    if (score > bestScore)
                     {
-                        bestWeight = weight;
+                        bestScore = score;
                         closestInteractable = interactable;
                     }
                 }
             }
 
-            BestInteractableWeight = bestWeight;
+            BestInteractableWeight = bestScore;
             return closestInteractable;
+        }
+
+        protected override void InteractableSelected(GrabInteractable interactable)
+        {
+            base.InteractableSelected(interactable);
+            Pose target = _grabTarget.GetPose();
+            Pose source = _interactable.GetGrabSourceForTarget(target);
+            interactable.Grabbable.AddGrabPoint(Identifier, source);
+            _tween.StopAndSetPose(source);
+            _tween.TweenTo(target);
+            interactable.Grabbable.WhenGrabbableUpdated += HandleGrabbableUpdated;
+        }
+
+        private void HandleGrabbableUpdated(GrabbableArgs args)
+        {
+            if (SelectedInteractable == null)
+            {
+                return;
+            }
+
+            if (args.GrabbableEvent == GrabbableEvent.Update)
+            {
+                return;
+            }
+
+            Pose target = _grabTarget.GetPose();
+            if (SelectedInteractable.ResetGrabOnGrabsUpdated)
+            {
+                Pose source = _interactable.GetGrabSourceForTarget(target);
+                SelectedInteractable.Grabbable.ResetGrabPoint(Identifier, source);
+                _tween = new Tween(source);
+                _tween.TweenTo(target);
+            }
+            else
+            {
+                SelectedInteractable.Grabbable.ResetGrabPoint(Identifier, target);
+                _tween = new Tween(target);
+                _tween.TweenTo(target);
+            }
         }
 
         protected override void InteractableUnselected(GrabInteractable interactable)
         {
+            interactable.Grabbable.WhenGrabbableUpdated -= HandleGrabbableUpdated;
+            interactable.Grabbable.RemoveGrabPoint(Identifier, _tween.Pose);
             base.InteractableUnselected(interactable);
 
             ReleaseVelocityInformation throwVelocity = VelocityCalculator != null ?
@@ -135,12 +179,14 @@ namespace Oculus.Interaction
 
         protected override void DoSelectUpdate(GrabInteractable interactable)
         {
-            base.DoSelectUpdate();
-
             if (interactable == null)
             {
                 return;
             }
+
+            _tween.UpdateTarget(_grabTarget.GetPose());
+            _tween.Tick();
+            interactable.Grabbable.UpdateGrabPoint(Identifier, _tween.Pose);
 
             if (interactable.ReleaseDistance > 0.0f)
             {
@@ -163,26 +209,31 @@ namespace Oculus.Interaction
         }
 
         #region Inject
-
-        public void InjectAllGrabInteractor(Transform targetTransform, Rigidbody rigidbody)
+        public void InjectAllGrabInteractor(ISelector selector, Rigidbody rigidbody)
         {
-            InjectTargetTransform(targetTransform);
-            InjectRigidbodyRef(rigidbody);
+            InjectSelector(selector);
+            InjectRigidbody(rigidbody);
         }
 
-        public void InjectTargetTransform(Transform targetTransform)
+        public void InjectSelector(ISelector selector)
         {
-            _targetTransform = targetTransform;
+            _selector = selector as MonoBehaviour;
+            Selector = selector;
         }
 
-        public void InjectRigidbodyRef(Rigidbody rigidbody)
+        public void InjectRigidbody(Rigidbody rigidbody)
         {
             _rigidbody = rigidbody;
         }
 
-        public void InjectOptionalGrabAnchorTransform(Transform grabAnchorTransform)
+        public void InjectOptionalGrabCenter(Transform grabCenter)
         {
-            _grabAnchorTransform = grabAnchorTransform;
+            _grabCenter = grabCenter;
+        }
+
+        public void InjectOptionalGrabTarget(Transform grabTarget)
+        {
+            _grabTarget = grabTarget;
         }
 
         public void InjectOptionalVelocityCalculator(IVelocityCalculator velocityCalculator)

@@ -10,6 +10,7 @@ ANY KIND, either express or implied. See the License for the specific language g
 permissions and limitations under the License.
 ************************************************************************************/
 
+using Oculus.Interaction.Editor;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -20,16 +21,13 @@ namespace Oculus.Interaction.HandPosing.SnapSurfaces.Editor
     [CanEditMultipleObjects]
     public class BoxEditor : UnityEditor.Editor
     {
-        private static readonly Color NONINTERACTABLE_COLOR = new Color(0f, 1f, 1f, 0.1f);
-        private static readonly Color INTERACTABLE_COLOR = new Color(0f, 1f, 1f, 0.5f);
-
         private BoxBoundsHandle _boxHandle = new BoxBoundsHandle();
         private BoxSurface _surface;
 
         private void OnEnable()
         {
-            _boxHandle.handleColor = INTERACTABLE_COLOR;
-            _boxHandle.wireframeColor = NONINTERACTABLE_COLOR;
+            _boxHandle.handleColor = EditorConstants.PRIMARY_COLOR;
+            _boxHandle.wireframeColor = EditorConstants.PRIMARY_COLOR_DISABLED;
             _boxHandle.axes = PrimitiveBoundsHandle.Axes.X | PrimitiveBoundsHandle.Axes.Z;
 
             _surface = (target as BoxSurface);
@@ -49,7 +47,7 @@ namespace Oculus.Interaction.HandPosing.SnapSurfaces.Editor
 
         private void DrawSnapLines(BoxSurface surface)
         {
-            Handles.color = INTERACTABLE_COLOR;
+            Handles.color = EditorConstants.PRIMARY_COLOR;
 
             Vector3 rightAxis = surface.Rotation * Vector3.right;
             Vector3 forwardAxis = surface.Rotation * Vector3.forward;
@@ -68,7 +66,7 @@ namespace Oculus.Interaction.HandPosing.SnapSurfaces.Editor
 
         private void DrawSlider(BoxSurface surface)
         {
-            Handles.color = INTERACTABLE_COLOR;
+            Handles.color = EditorConstants.PRIMARY_COLOR;
 
             EditorGUI.BeginChangeCheck();
             Vector3 rightDir = surface.Rotation * Vector3.right;

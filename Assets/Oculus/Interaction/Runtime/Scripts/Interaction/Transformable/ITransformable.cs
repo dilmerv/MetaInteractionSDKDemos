@@ -10,18 +10,11 @@ ANY KIND, either express or implied. See the License for the specific language g
 permissions and limitations under the License.
 ************************************************************************************/
 
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using UnityEngine;
 
-namespace Oculus.Interaction
+namespace Oculus.Interaction.Deprecated
 {
-    public interface ITransformable
-    {
-        event Action<TransformableArgs> WhenTransformableUpdated;
-
-        List<GrabPoint> GrabPoints { get; }
-
-        Transform Transform { get; }
-    }
+    [Obsolete("Replaced with IGrabbable")]
+    public interface ITransformable { }
 }

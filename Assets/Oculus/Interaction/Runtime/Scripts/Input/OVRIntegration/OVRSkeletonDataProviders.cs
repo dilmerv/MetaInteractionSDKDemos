@@ -243,9 +243,9 @@ namespace Oculus.Interaction.Input
         public IOVRCameraRigRef CameraRigRef { get; private set; }
 
         [Header("Update CameraRig Transforms")]
-        [SerializeField, Interface(typeof(IDataSource<HmdDataAsset, HmdDataSourceConfig>))]
+        [SerializeField, Interface(typeof(IDataSource<HmdDataAsset>))]
         private MonoBehaviour _hmdData;
-        private IDataSource<HmdDataAsset, HmdDataSourceConfig> _hmdDataSource;
+        private IDataSource<HmdDataAsset> _hmdDataSource;
 
         [SerializeField]
         private Hand _leftHand;
@@ -301,7 +301,7 @@ namespace Oculus.Interaction.Input
         protected virtual void Awake()
         {
             CameraRigRef = _cameraRigRef as IOVRCameraRigRef;
-            _hmdDataSource = _hmdData as IDataSource<HmdDataAsset, HmdDataSourceConfig>;
+            _hmdDataSource = _hmdData as IDataSource<HmdDataAsset>;
         }
 
         protected virtual void Start()
@@ -400,13 +400,13 @@ namespace Oculus.Interaction.Input
         {
             if (_started)
             {
-                _leftHand.HandUpdated += OnLeftHandDataAvailable;
-                _rightHand.HandUpdated += OnRightHandDataAvailable;
+                _leftHand.WhenHandUpdated += HandleLeftHandDataUpdated;
+                _rightHand.WhenHandUpdated += HandleRightHandDataUpdated;
 
                 // The root poses of the Hand and HMD must be updated just after OVRCameraRig, which is at
                 //   priority 0. Otherwise the changes will be overwritten in that update. To solve this, root
                 //   poses are updated in the OVRCameraRig.UpdatedAnchors callback.
-                CameraRigRef.CameraRig.UpdatedAnchors += OnCameraRigUpdatedAnchors;
+                CameraRigRef.WhenInputDataDirtied += OnCameraRigUpdatedAnchors;
             }
         }
 
@@ -414,9 +414,9 @@ namespace Oculus.Interaction.Input
         {
             if (_started)
             {
-                CameraRigRef.CameraRig.UpdatedAnchors -= OnCameraRigUpdatedAnchors;
-                _leftHand.HandUpdated -= OnLeftHandDataAvailable;
-                _rightHand.HandUpdated -= OnRightHandDataAvailable;
+                CameraRigRef.WhenInputDataDirtied -= OnCameraRigUpdatedAnchors;
+                _leftHand.WhenHandUpdated -= HandleLeftHandDataUpdated;
+                _rightHand.WhenHandUpdated -= HandleRightHandDataUpdated;
             }
         }
 
@@ -442,17 +442,17 @@ namespace Oculus.Interaction.Input
             }
         }
 
-        private void OnCameraRigUpdatedAnchors(OVRCameraRig obj)
+        private void OnCameraRigUpdatedAnchors(bool isLateUpdate)
         {
             OverwriteHandTransforms();
         }
 
-        private void OnLeftHandDataAvailable()
+        private void HandleLeftHandDataUpdated()
         {
             _leftHandOvrSkeletonDataProvider.UpdateSkeletonPoseData();
         }
 
-        private void OnRightHandDataAvailable()
+        private void HandleRightHandDataUpdated()
         {
             _rightHandOvrSkeletonDataProvider.UpdateSkeletonPoseData();
         }
@@ -612,7 +612,7 @@ namespace Oculus.Interaction.Input
         #region Inject
 
         public void InjectOVRSkeletonDataProviders(IOVRCameraRigRef cameraRigRef,
-            IDataSource<HmdDataAsset, HmdDataSourceConfig> hmdData,
+            IDataSource<HmdDataAsset> hmdData,
             Hand leftHand, Hand rightHand, bool modifyCameraRigAnchorTransforms, bool modifyHandTransformsLeft,
             bool modifyHandTransformsRight, bool replaceHandMeshRendererProviders,
             HandRenderPoseOriginBehavior handRenderBehavior)
@@ -634,7 +634,7 @@ namespace Oculus.Interaction.Input
             CameraRigRef = cameraRigRef;
         }
 
-        public void InjectHmdData(IDataSource<HmdDataAsset,HmdDataSourceConfig> hmdData)
+        public void InjectHmdData(IDataSource<HmdDataAsset> hmdData)
         {
             _hmdData = hmdData as MonoBehaviour;
             _hmdDataSource = hmdData;

@@ -3,10 +3,14 @@ This repo contains a variety of demos while using the Meta Interaction SDK and t
 
 |Demos||
 |---|---|
+|Hand Pose Player Controller & Curved Canvas||
 |<img src="https://github.com/dilmerv/MetaInteractionSDKDemos/blob/master/docs/images/demo_1.gif" width="300">|<img src="https://github.com/dilmerv/MetaInteractionSDKDemos/blob/master/docs/images/demo_2.gif" width="300">|
 |<img src="https://github.com/dilmerv/MetaInteractionSDKDemos/blob/master/docs/images/demo_3.gif" width="300">|<img src="https://github.com/dilmerv/MetaInteractionSDKDemos/blob/master/docs/images/demo_4.gif" width="300">|
+|Grab Interactions Scene||
+|<img src="https://github.com/dilmerv/MetaInteractionSDKDemos/blob/master/docs/images/demo_5.gif" width="300">|<img src="https://github.com/dilmerv/MetaInteractionSDKDemos/blob/master/docs/images/demo_6.gif" width="300">|
+|<img src="https://github.com/dilmerv/MetaInteractionSDKDemos/blob/master/docs/images/demo_7.gif" width="300">|<img src="https://github.com/dilmerv/MetaInteractionSDKDemos/blob/master/docs/images/demo_8.gif" width="300">|
 
-## :pushpin: Scenes:
+## :video_game: Scenes:
 - GrabInteractions.unity
 - HandPoseDetection.unity
 - PlayerController.unity

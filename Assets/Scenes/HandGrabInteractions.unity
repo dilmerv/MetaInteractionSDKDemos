@@ -1726,7 +1726,7 @@ PrefabInstance:
     - target: {fileID: 5063396924701181464, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
       propertyPath: _oneGrabTransformer
       value: 
-      objectReference: {fileID: 1148297989}
+      objectReference: {fileID: 0}
     - target: {fileID: 5063396924701181465, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
       propertyPath: _grabbable
       value: 
@@ -1865,7 +1865,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5063396924701181466, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
   m_PrefabInstance: {fileID: 1148297984}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1148297989
+--- !u!4 &1148297990 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5063396924701181467, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
+  m_PrefabInstance: {fileID: 1148297984}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1148297991
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1874,16 +1879,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 1148297988}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94900559e72f2654ca112bf2fbc6f0c6, type: 3}
+  m_Script: {fileID: 11500000, guid: 3236b8f205019504589358e7e0412a38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _customJoint: {fileID: 0}
-  _isKinematicGrab: 1
---- !u!4 &1148297990 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5063396924701181467, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
-  m_PrefabInstance: {fileID: 1148297984}
+--- !u!114 &1148297992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148297988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bedaac29a943f844a7074b53c8bdf9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _grabbable: {fileID: 1148297986}
+  _rigidbody: {fileID: 1148297987}
+  _scaleMassWithSize: 1
 --- !u!1001 &1427322118
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1894,7 +1907,7 @@ PrefabInstance:
     - target: {fileID: 5063396924701181464, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
       propertyPath: _oneGrabTransformer
       value: 
-      objectReference: {fileID: 1427322123}
+      objectReference: {fileID: 0}
     - target: {fileID: 5063396924701181465, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
       propertyPath: _grabbable
       value: 
@@ -2037,7 +2050,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5063396924701181466, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
   m_PrefabInstance: {fileID: 1427322118}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1427322123
+--- !u!4 &1427322124 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5063396924701181467, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
+  m_PrefabInstance: {fileID: 1427322118}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1427322125
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2046,16 +2064,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 1427322122}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94900559e72f2654ca112bf2fbc6f0c6, type: 3}
+  m_Script: {fileID: 11500000, guid: 3236b8f205019504589358e7e0412a38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _customJoint: {fileID: 0}
-  _isKinematicGrab: 0
---- !u!4 &1427322124 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5063396924701181467, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
-  m_PrefabInstance: {fileID: 1427322118}
+--- !u!114 &1427322126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1427322122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bedaac29a943f844a7074b53c8bdf9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _grabbable: {fileID: 1427322120}
+  _rigidbody: {fileID: 1427322121}
+  _scaleMassWithSize: 1
 --- !u!1001 &1730534054
 PrefabInstance:
   m_ObjectHideFlags: 0

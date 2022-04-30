@@ -1807,6 +1807,10 @@ PrefabInstance:
       propertyPath: m_Size.z
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 5063396925436119761, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
     - target: {fileID: 5063396925436119762, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.1
@@ -1831,7 +1835,8 @@ PrefabInstance:
       propertyPath: m_IsKinematic
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5063396925395755592, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
 --- !u!114 &1148297985 stripped
 MonoBehaviour:
@@ -1863,6 +1868,11 @@ Rigidbody:
 --- !u!1 &1148297988 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5063396924701181466, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
+  m_PrefabInstance: {fileID: 1148297984}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1148297989 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5063396925395755595, guid: 4a3c8f82a01756d43afc639499c0ce51, type: 3}
   m_PrefabInstance: {fileID: 1148297984}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1148297990 stripped
@@ -1897,6 +1907,19 @@ MonoBehaviour:
   _grabbable: {fileID: 1148297986}
   _rigidbody: {fileID: 1148297987}
   _scaleMassWithSize: 1
+--- !u!135 &1148297993
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148297989}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.05
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1427322118
 PrefabInstance:
   m_ObjectHideFlags: 0

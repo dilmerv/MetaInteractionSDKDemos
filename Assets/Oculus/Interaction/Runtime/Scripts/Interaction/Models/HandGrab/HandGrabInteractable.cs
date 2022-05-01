@@ -262,6 +262,17 @@ namespace Oculus.Interaction.HandPosing
             return record;
         }
 
+        public static HandGrabInteractable Create(Transform parent, Rigidbody rigidbody, Grabbable grabbable, string name = null)
+        {
+            GameObject go = new GameObject(name ?? "HandGrabInteractable");
+            go.transform.SetParent(parent, false);
+            HandGrabInteractable record = go.AddComponent<HandGrabInteractable>();
+            record._relativeTo = parent;
+            record._rigidbody = rigidbody;
+            record._grabbable = grabbable;
+            return record;
+        }
+
         public HandGrabPoint CreatePoint()
         {
             GameObject go = this.gameObject;

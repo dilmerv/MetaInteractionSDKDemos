@@ -7,7 +7,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-public class HandPoseRecorderPlus : ScriptableWizard
+public class HandPoseRecorderPlus : MonoBehaviour
 {   
     [Header("Reference interactor used for Hand Grab:")]
     [SerializeField]
@@ -42,13 +42,6 @@ public class HandPoseRecorderPlus : ScriptableWizard
     [SerializeField]
     private string _loadPoses;
 
-    [MenuItem("OculusUtils/Interaction/Hand Pose Recorder")]
-    private static void CreateWizard()
-    {
-        HandPoseRecorderPlus wizard = DisplayWizard<HandPoseRecorderPlus>("Hand Pose Recorder", "Close");
-        wizard.helpString = "Auto-Generate HandGrabInteractables with HandPoses in PlayMode, then Store and retrieve them in EditMode to persist and tweak them.";
-    }
-
     private void Awake()
     {
         if (_ghostProvider == null)
@@ -57,29 +50,18 @@ public class HandPoseRecorderPlus : ScriptableWizard
         }
     }
 
-    protected override bool DrawWizardGUI()
+    public void Update()
     {
-        if (_handGrabInteractor == null)
-        {
-            //TODO unity might lose this reference (But still present it in the inspector) 
-            //during Play-Edit mode changes
-            _handGrabInteractor = null;
-        }
-
-        Event e = Event.current;
-        if (e.type == EventType.KeyDown
-            && e.keyCode == _recordKey)
+        if (Input.GetKeyDown(_recordKey))
         {
             RecordPose();
         }
-
-        return base.DrawWizardGUI();
     }
 
     public void RecordPose()
     {
         if (_handGrabInteractor == null
-            || _handGrabInteractor.Hand == null)
+            || _handGrabInteractor.Hand == null) 
         {
             Debug.LogError("Missing HandGrabInteractor. Ensure you are in PLAY mode!", this);
             return;
@@ -129,7 +111,10 @@ public class HandPoseRecorderPlus : ScriptableWizard
 
     public HandGrabPoint AddHandGrabPoint(HandPose rawPose, Pose snapPoint)
     {
-        HandGrabInteractable interactable = HandGrabInteractable.Create(_recordable.transform);
+        HandGrabInteractable interactable = HandGrabInteractable
+            .Create(_recordable.transform, _recordable.GetComponent<Rigidbody>(),
+            _recordable.GetComponent<Grabbable>());
+
         HandGrabPointData pointData = new HandGrabPointData()
         {
             handPose = rawPose,
@@ -142,7 +127,10 @@ public class HandPoseRecorderPlus : ScriptableWizard
 
     private HandGrabInteractable LoadHandGrabInteractable(HandGrabInteractableData data)
     {
-        HandGrabInteractable interactable = HandGrabInteractable.Create(_recordable.transform);
+        HandGrabInteractable interactable = HandGrabInteractable
+            .Create(_recordable.transform, _recordable.GetComponent<Rigidbody>(),
+            _recordable.GetComponent<Grabbable>());
+
         interactable.LoadData(data);
         return interactable;
     }

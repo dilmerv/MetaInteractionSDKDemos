@@ -262,7 +262,7 @@ namespace Oculus.Interaction.HandPosing
             return record;
         }
 
-        public static HandGrabInteractable Create(Transform parent, Rigidbody rigidbody, Grabbable grabbable, string name = null)
+        public static HandGrabInteractable Create(Transform parent, Rigidbody rigidbody, Grabbable grabbable, GrabTypeFlags grabTypeFlags, string name = null)
         {
             GameObject go = new GameObject(name ?? "HandGrabInteractable");
             go.transform.SetParent(parent, false);
@@ -270,6 +270,7 @@ namespace Oculus.Interaction.HandPosing
             record._relativeTo = parent;
             record._rigidbody = rigidbody;
             record._grabbable = grabbable;
+            record._supportedGrabTypes = grabTypeFlags;
             return record;
         }
 

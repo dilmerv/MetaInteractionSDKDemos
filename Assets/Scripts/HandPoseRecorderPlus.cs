@@ -1,4 +1,5 @@
 using Oculus.Interaction;
+using Oculus.Interaction.Grab;
 using Oculus.Interaction.HandPosing;
 using Oculus.Interaction.HandPosing.Visuals;
 using Oculus.Interaction.Input;
@@ -19,6 +20,9 @@ public class HandPoseRecorderPlus : MonoBehaviour
     [SerializeField, Optional]
     [Tooltip("Prototypes of the static hands (ghosts) that visualize holding poses")]
     private HandGhostProvider _ghostProvider;
+
+    [SerializeField]
+    private GrabTypeFlags _grabTypeFlags = GrabTypeFlags.All;
 
     [SerializeField, Optional]
     [Tooltip("Collection for storing generated HandGrabInteractables during Play-Mode, so they can be restored in Edit-Mode")]
@@ -113,7 +117,7 @@ public class HandPoseRecorderPlus : MonoBehaviour
     {
         HandGrabInteractable interactable = HandGrabInteractable
             .Create(_recordable.transform, _recordable.GetComponent<Rigidbody>(),
-            _recordable.GetComponent<Grabbable>());
+            _recordable.GetComponent<Grabbable>(), _grabTypeFlags);
 
         HandGrabPointData pointData = new HandGrabPointData()
         {
@@ -125,11 +129,11 @@ public class HandPoseRecorderPlus : MonoBehaviour
     }
 
 
-    private HandGrabInteractable LoadHandGrabInteractable(HandGrabInteractableData data)
+    private HandGrabInteractable LoadHandGrabInteractable(Oculus.Interaction.HandPosing.HandGrabInteractableData data)
     {
         HandGrabInteractable interactable = HandGrabInteractable
             .Create(_recordable.transform, _recordable.GetComponent<Rigidbody>(),
-            _recordable.GetComponent<Grabbable>());
+            _recordable.GetComponent<Grabbable>(), _grabTypeFlags);
 
         interactable.LoadData(data);
         return interactable;
@@ -139,7 +143,7 @@ public class HandPoseRecorderPlus : MonoBehaviour
     {
         if (_posesCollection != null)
         {
-            foreach (HandGrabInteractableData handPose in _posesCollection.InteractablesData)
+            foreach (Oculus.Interaction.HandPosing.HandGrabInteractableData handPose in _posesCollection.InteractablesData)
             {
                 LoadHandGrabInteractable(handPose);
             }
@@ -148,7 +152,7 @@ public class HandPoseRecorderPlus : MonoBehaviour
 
     private void SaveToAsset()
     {
-        List<HandGrabInteractableData> savedPoses = new List<HandGrabInteractableData>();
+        List<Oculus.Interaction.HandPosing.HandGrabInteractableData> savedPoses = new List<Oculus.Interaction.HandPosing.HandGrabInteractableData>();
         foreach (HandGrabInteractable snap in _recordable.GetComponentsInChildren<HandGrabInteractable>(false))
         {
             savedPoses.Add(snap.SaveData());

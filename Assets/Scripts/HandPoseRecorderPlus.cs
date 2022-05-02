@@ -3,6 +3,7 @@ using Oculus.Interaction.Grab;
 using Oculus.Interaction.HandPosing;
 using Oculus.Interaction.HandPosing.Visuals;
 using Oculus.Interaction.Input;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -28,12 +29,18 @@ public class HandPoseRecorderPlus : MonoBehaviour
     [Tooltip("Collection for storing generated HandGrabInteractables during Play-Mode, so they can be restored in Edit-Mode")]
     private HandGrabInteractableDataCollection _posesCollection = null;
 
-    [Header("1- Go to Play mode and record your poses: ")]
+    [Header("1a - Go to Play mode and record your poses one time")]
     [SerializeField]
     private KeyCode _recordKey = KeyCode.Space;
-    [InspectorButton("RecordPose", 80)]
+
+    [Header("1b - Go to Play mode and record your poses on a timer")]
     [SerializeField]
-    private string _recordPose;
+    private KeyCode _recordToggleFrequencyKey = KeyCode.R;
+
+    [SerializeField]
+    private float _recordFrequencyTimer = 2.0f;
+    private Coroutine _recordTimerCoroutine;
+    private bool _recordFrequencyStarted = false;
 
     [Header("2- Store your poses before exiting Play mode: ")]
         
@@ -60,27 +67,49 @@ public class HandPoseRecorderPlus : MonoBehaviour
         {
             RecordPose();
         }
+        if (Input.GetKeyDown(_recordToggleFrequencyKey))
+        {
+            _recordFrequencyStarted = !_recordFrequencyStarted;
+            Logger.Instance.LogInfo($"Recording frequency initiated");
+
+            if (_recordTimerCoroutine == null)
+            {
+                Logger.Instance.LogInfo($"Creating Record Pose update coroutine");
+                _recordTimerCoroutine = StartCoroutine(RecordPoseUpdate());
+            }
+        }
+    }
+
+    private IEnumerator RecordPoseUpdate()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(_recordFrequencyTimer);
+            if(_recordFrequencyStarted) RecordPose();
+        }
     }
 
     public void RecordPose()
     {
+        Logger.Instance.LogInfo($"Recording hand pose for game object {_recordable.name}");
+
         if (_handGrabInteractor == null
             || _handGrabInteractor.Hand == null) 
         {
-            Debug.LogError("Missing HandGrabInteractor. Ensure you are in PLAY mode!", this);
+            Logger.Instance.LogError("Missing HandGrabInteractor. Ensure you are in PLAY mode!");
             return;
         }
 
         if (_recordable == null)
         {
-            Debug.LogError("Missing Recordable", this);
+            Logger.Instance.LogError("Missing Recordable");
             return;
         }
 
         HandPose trackedHandPose = TrackedPose();
         if (trackedHandPose == null)
         {
-            Debug.LogError("Tracked Pose could not be retrieved", this);
+            Logger.Instance.LogError("Tracked Pose could not be retrieved");
             return;
         }
         Pose gripPoint = _recordable.transform.RelativeOffset(_handGrabInteractor.transform);

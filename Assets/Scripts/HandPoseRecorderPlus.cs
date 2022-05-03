@@ -6,6 +6,7 @@ using Oculus.Interaction.Input;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 
@@ -38,8 +39,12 @@ public class HandPoseRecorderPlus : MonoBehaviour
     private KeyCode _recordToggleFrequencyKey = KeyCode.R;
 
     [SerializeField]
-    private float _recordFrequencyTimer = 2.0f;
-    private Coroutine _recordTimerCoroutine;
+    private int _recordFrequency = 2;
+
+    [SerializeField]
+    private TextMeshProUGUI _recordTimerText;
+
+    private float _recordFrequencyTimer;
     private bool _recordFrequencyStarted = false;
 
     [Header("2- Store your poses before exiting Play mode: ")]
@@ -55,6 +60,8 @@ public class HandPoseRecorderPlus : MonoBehaviour
 
     private void Awake()
     {
+        _recordTimerText.text = _recordFrequency.ToString("0");
+
         if (_ghostProvider == null)
         {
             HandGhostProvider.TryGetDefault(out _ghostProvider);
@@ -67,34 +74,41 @@ public class HandPoseRecorderPlus : MonoBehaviour
         {
             RecordPose();
         }
+
         if (Input.GetKeyDown(_recordToggleFrequencyKey))
         {
-            _recordFrequencyStarted = !_recordFrequencyStarted;
+            _recordFrequencyStarted = true;
+            _recordFrequencyTimer = _recordFrequency;
             Logger.Instance.LogInfo($"Recording frequency initiated");
+        }
 
-            if (_recordTimerCoroutine == null)
+        if (_recordFrequencyStarted)
+        {
+            if (_recordFrequencyTimer > 0)
             {
-                Logger.Instance.LogInfo($"Creating Record Pose update coroutine");
-                _recordTimerCoroutine = StartCoroutine(RecordPoseUpdate());
+                _recordFrequencyTimer -= Time.deltaTime;
+                _recordTimerText.text = $"{Mathf.CeilToInt(_recordFrequencyTimer)}";
+            }
+            else
+            {
+                Logger.Instance.LogInfo($"Recording hand pose for game object {_recordable.name}");
+                
+                RecordPose();
+
+                // reset frequency values
+                _recordFrequencyStarted = false;
+                _recordFrequencyTimer = _recordFrequency;
             }
         }
     }
 
-    private IEnumerator RecordPoseUpdate()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(_recordFrequencyTimer);
-            if(_recordFrequencyStarted) RecordPose();
-        }
-    }
 
     public void RecordPose()
     {
         Logger.Instance.LogInfo($"Recording hand pose for game object {_recordable.name}");
 
         if (_handGrabInteractor == null
-            || _handGrabInteractor.Hand == null) 
+            || _handGrabInteractor.Hand == null)
         {
             Logger.Instance.LogError("Missing HandGrabInteractor. Ensure you are in PLAY mode!");
             return;

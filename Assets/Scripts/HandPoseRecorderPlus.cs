@@ -3,7 +3,6 @@ using Oculus.Interaction.Grab;
 using Oculus.Interaction.HandPosing;
 using Oculus.Interaction.HandPosing.Visuals;
 using Oculus.Interaction.Input;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
@@ -30,13 +29,13 @@ public class HandPoseRecorderPlus : MonoBehaviour
     [Tooltip("Collection for storing generated HandGrabInteractables during Play-Mode, so they can be restored in Edit-Mode")]
     private HandGrabInteractableDataCollection _posesCollection = null;
 
-    [Header("1a - Go to Play mode and record your poses one time")]
+    [Header("1a - During Play mode start the recording timer")]
     [SerializeField]
-    private KeyCode _recordKey = KeyCode.Space;
+    private KeyCode _recordStartKey = KeyCode.R;
 
-    [Header("1b - Go to Play mode and record your poses on a timer")]
+    [Header("1b - During Play mode stop the recording timer")]
     [SerializeField]
-    private KeyCode _recordToggleFrequencyKey = KeyCode.R;
+    private KeyCode _recordStopKey = KeyCode.Space;
 
     [SerializeField]
     private int _recordFrequency = 2;
@@ -70,16 +69,17 @@ public class HandPoseRecorderPlus : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(_recordKey))
+        if (Input.GetKeyDown(_recordStopKey))
         {
-            RecordPose();
+            Logger.Instance.LogInfo($"Recording stopped");
+            _recordFrequencyStarted = false;
         }
 
-        if (Input.GetKeyDown(_recordToggleFrequencyKey))
+        if (Input.GetKeyDown(_recordStartKey))
         {
+            Logger.Instance.LogInfo($"Recording started");
             _recordFrequencyStarted = true;
             _recordFrequencyTimer = _recordFrequency;
-            Logger.Instance.LogInfo($"Recording frequency initiated");
         }
 
         if (_recordFrequencyStarted)
@@ -92,11 +92,7 @@ public class HandPoseRecorderPlus : MonoBehaviour
             else
             {
                 Logger.Instance.LogInfo($"Recording hand pose for game object {_recordable.name}");
-                
                 RecordPose();
-
-                // reset frequency values
-                _recordFrequencyStarted = false;
                 _recordFrequencyTimer = _recordFrequency;
             }
         }

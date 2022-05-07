@@ -39,7 +39,9 @@ namespace Oculus.Interaction
         {
             base.Register(interactable);
 
-            GameObject triggerGameObject = interactable.Rigidbody.gameObject;
+            GameObject triggerGameObject = interactable.Rigidbody?.gameObject ?? 
+                interactable.gameObject.GetComponentInParent<Rigidbody>().gameObject;
+
             InteractableTriggerBroadcaster broadcaster;
             if (!_broadcasters.TryGetValue(interactable, out broadcaster))
             {

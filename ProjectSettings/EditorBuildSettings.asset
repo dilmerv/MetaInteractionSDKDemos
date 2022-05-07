@@ -6,11 +6,20 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/CurvedCanvases.unity
+    guid: ce79c9a7c1fbf5c459d9bb63b24fb062
+  - enabled: 1
+    path: Assets/Scenes/GrabInteractions.unity
+    guid: d2578c4953c2bfc4fb8342c7315f4a35
+  - enabled: 1
+    path: Assets/Scenes/HandGrabInteractions.unity
+    guid: ba90f1927040ed146818413d42060820
+  - enabled: 1
     path: Assets/Scenes/HandPoseDetection.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Scenes/CurvedCanvases.unity
-    guid: ce79c9a7c1fbf5c459d9bb63b24fb062
+    path: Assets/Scenes/HandPoseRecorderPlus.unity
+    guid: 26ff29bff1eee774ebb5fdeb2c6d6be0
   - enabled: 1
     path: Assets/Scenes/PlayerController.unity
     guid: 0dfe3e3f82d7fac469d0ab7878dcae9f
